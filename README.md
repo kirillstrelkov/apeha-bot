@@ -12,7 +12,7 @@ http://www.wxpython.org/download.php
 
 #### УСТАНОВКА РЕКОМЕНДУЕМЫХ КОМПОНЕНТОВ:
 Для поддержки Google Chrome необходимо скачать chromedriver из:
-    http://code.google.com/p/chromedriver/downloads/list
+    https://sites.google.com/a/chromium.org/chromedriver/downloads
 и распаковать и поместить 'chromedriver.exe' в папку пользователя(пример: C:\Users\max)
 
 **NB**: Google Chrome - работает быстрее Firefox'a
