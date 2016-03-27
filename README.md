@@ -4,12 +4,10 @@
 1. Скачать и установить Python **2.7**:
 https://www.python.org/downloads/
 2. Скачать и запустить:
-http://python-distribute.org/distribute_setup.py
+https://bootstrap.pypa.io/get-pip.py
 3. Открыть коммандную строку(cmd.exe) и запустить комманду:
-`C:\Python27\Scripts\easy_install.exe pip`
-4. Открыть коммандную строку(cmd.exe) и запустить комманду:
 `C:\Python27\Scripts\pip.exe install selenium`
-5. Скачать и установить wxPython:
+4. Скачать и установить wxPython:
 http://www.wxpython.org/download.php
 
 #### УСТАНОВКА РЕКОМЕНДУЕМЫХ КОМПОНЕНТОВ:
