@@ -21,11 +21,13 @@ class StopException(Exception):
 class ApehaBot(object):
     stop_event = Event()
 
-    def __init__(self, default_settings=None):
+    def __init__(self, default_settings=None, use_saved_ids_from_settings=False):
         if not default_settings:
             self.default_settings = BotSettings()
         else:
             self.default_settings = default_settings
+
+        self.use_saved_ids_from_settings = use_saved_ids_from_settings
 
     def to_stop(self):
         if self.stop_event.is_set():
@@ -151,16 +153,21 @@ class ApehaBot(object):
             rating = f_info.get_rating()
             if abs(self.default_settings.rating - rating) <= 0.2:
                 item_ids = self.default_settings.item_ids
-            else:
-                self.default_settings.item_ids = self._take_off_put_on_items(f_action)
+            elif self.use_saved_ids_from_settings:
                 item_ids = self.default_settings.item_ids
+                f_action.take_off_item_and_get_ids()
+                f_action.put_on_items_by_ids(item_ids)
+            else:
+                item_ids = self._take_off_put_on_items(f_action)
 
-                rating = f_info.get_rating()
-                self.default_settings.rating = rating
+            self.default_settings.item_ids = item_ids
+
+            rating = f_info.get_rating()
+            self.default_settings.rating = rating
     
             save_settings(self.default_settings)
 
-            while(True):
+            while True:
                 try:
                     self.to_stop()
                     rating = f_info.get_rating()
@@ -169,7 +176,7 @@ class ApehaBot(object):
                     self._cure_injury_if_injured(f_info, f_action)
                     self._go_back_to_castle_and_wait_for_hp_mana(f_action, f_info, info.clan)
 
-                    # Gets presonal info
+                    # Gets personal info
                     info = f_info.get_player_info()
 
                     f_action._click_main_square()

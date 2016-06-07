@@ -45,7 +45,7 @@ class ApehaBotUI(Frame):
         redir = RedirectText(self.output)
         sys.stdout = redir
         sys.stderr = redir
-        self.apeha_bot = ApehaBot(self.settings)
+        self.apeha_bot = None
         self.running_thread = None
 
     def __create_ui(self):
@@ -109,6 +109,13 @@ class ApehaBotUI(Frame):
         hbox.Add(lname, 1, flag=ALL, border=4)
         hbox.Add(self.txt_bad_players, 2)
         self.txt_bad_players.SetValue(u", ".join(self.settings.fighting_settings.UNWANTED_PLAYERS))
+        sizer.Add(hbox, 0, flag=EXPAND)
+
+        hbox = BoxSizer(HORIZONTAL)
+        self.cb_save_items = CheckBox(self)
+        self.cb_save_items.SetLabel(u"Надеть сохраненные вещи")
+        self.cb_save_items.SetValue(True)
+        hbox.Add(self.cb_save_items)
         sizer.Add(hbox, 0, flag=EXPAND)
 
         hbox = BoxSizer(HORIZONTAL)
@@ -235,9 +242,11 @@ class ApehaBotUI(Frame):
             self.settings.fighting_settings.UNWANTED_PLAYERS = bad_players
 
             def cmd():
+                self.apeha_bot = ApehaBot(self.settings, use_saved_ids_from_settings=self.cb_save_items.GetValue())
                 self.apeha_bot.run(username, password, astral_level, block_ids)
 
-            self.apeha_bot.stop_event.clear()
+                self.apeha_bot.stop_event.clear()
+
             self.running_thread = Thread(target=safe_execute, args=(cmd,))
             self.running_thread.setDaemon(True)
             self.running_thread.start()
