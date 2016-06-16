@@ -800,7 +800,7 @@ class FrameAction(Frame):
     def _repair_all_items(self):
         def get_btns():
             sleep(0.5)
-            full_repair = (By.CSS_SELECTOR, u"input[value='Чинить полностью']")
+            full_repair = (By.CSS_SELECTOR, u"input[value='Чинить']")
             return self.browser.find_elements(full_repair)
 
         before = 0
