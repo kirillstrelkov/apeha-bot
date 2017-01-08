@@ -262,6 +262,7 @@ class FrameCreateClone(RootBrowser):
     IMG_PLAYER = (By.CSS_SELECTOR, "#mapspan img")
 
     XPATH_IMG_BY_NICK = u"//img[contains(@title, '%s [')]"
+    CSS_IMG_BY_NICK = u"img[title*='%s [']"
 
     NICK = (By.ID, "VAL_nick")
     NICKNAMES = (By.ID, "aliveshow")
@@ -352,15 +353,17 @@ class FrameCreateClone(RootBrowser):
 
 #         print "here1"
         for player in players:
-            if self.browser.is_present(player) and self.browser.is_visible(player):
+            if self.browser.is_visible(player):
                 all_players.append(player)
-                if self.__is_clone(player):
-                    if self.__is_alias(player, team):
+                is_alias = self.__is_alias(player, team)
+                is_clone = self.__is_clone(player)
+                if is_clone:
+                    if is_alias:
                         my_team.append(player)
                     else:
                         enemy_team.append(player)
                 else:
-                    if self.__is_alias(player, team):
+                    if is_alias:
                         my_team.append(player)
                         alias_originals.append(player)
                     else:
@@ -376,14 +379,15 @@ class FrameCreateClone(RootBrowser):
         return Players(team, all_players, enemy_team, my_team, enemy_originals, alias_originals)
 
     def __get_css_selector_for_player_by_name(self, nickname):
-        selector = self.XPATH_IMG_BY_NICK % nickname
-        return (By.XPATH, selector)
+        # selector = self.XPATH_IMG_BY_NICK % nickname
+        # return By.XPATH, selector
+        selector = self.CSS_IMG_BY_NICK % nickname
+        return By.CSS_SELECTOR, selector
 
     def __get_css_selector_for_player(self, player):
         name = self._get_player_name(player)
         if name:
-            selector = self.XPATH_IMG_BY_NICK % name
-            return (By.XPATH, selector)
+            return self.__get_css_selector_for_player_by_name(name)
         else:
             return None
 
@@ -408,7 +412,7 @@ class FrameCreateClone(RootBrowser):
 
     def __get_team_color(self, element):
         self.frame._switch_to_frame()
-        if not self.browser.is_present(element) or not self.browser.is_visible(element):
+        if not self.browser.is_visible(element):
 #             print not self.browser.is_present(element), not self.browser.is_visible(element), element
             return None
 
@@ -536,7 +540,7 @@ class FrameAction(Frame):
     MARKET = (By.CSS_SELECTOR, u"input[value='На Рынок']")
     SMITHY = (By.CSS_SELECTOR, u"input[value='В Кузницу']")
     ARENA = (By.CSS_SELECTOR, u"input[value='На Арену']")
-    TR = (By.CSS_SELECTOR, "table.item tr")
+    TR = (By.CSS_SELECTOR, u"table.item tr")
     REFRESH = (By.CSS_SELECTOR, u"button[title='Обновить']")
 
     NEWBIE_ROOM = (By.CSS_SELECTOR, u"input[onclick=\"goRC('arena_room_1.html')\"]")
@@ -544,15 +548,15 @@ class FrameAction(Frame):
 
     CASTLE_BY_CLAN = (By.CSS_SELECTOR, u"input[value='К замку \"%s\"']")
     CASTLE_ALLEY = (By.CSS_SELECTOR, u"input[value='К замкам кланов']")
-    TWO_CASTLES = (By.CSS_SELECTOR, "table.contr table")
-    CASTLE_ROOMS = (By.CSS_SELECTOR, "table td")
+    TWO_CASTLES = (By.CSS_SELECTOR, u"table.contr table")
+    CASTLE_ROOMS = (By.CSS_SELECTOR, u"table td")
     STAND_UP = (By.CSS_SELECTOR, u"input[value='Встать']")
     SIT_DOWN = (By.CSS_SELECTOR, u"input[value='Присесть']")
 
     APPLICATIONS = (By.XPATH, u"//table[contains(@id, 'breq')]")
-    APP_MIN_LEVEL = (By.CSS_SELECTOR, "select[name='Battle{minlvl}']")
-    APP_NUM_PLAYERS = (By.CSS_SELECTOR, "select[name='Battle{maxp}']")
-    APP_TIMEOUT = (By.CSS_SELECTOR, 'select[name=\'Battle{tm}\']')
+    APP_MIN_LEVEL = (By.CSS_SELECTOR, u"select[name='Battle{minlvl}']")
+    APP_NUM_PLAYERS = (By.CSS_SELECTOR, u"select[name='Battle{maxp}']")
+    APP_TIMEOUT = (By.CSS_SELECTOR, u'select[name=\'Battle{tm}\']')
     APP_APPLY = (By.CSS_SELECTOR, u"input[value='Подать заявку']")
 
     HOME_HELMETS = (By.CSS_SELECTOR, u"input[value='Шлемы']")
@@ -578,7 +582,7 @@ class FrameAction(Frame):
     def _click_refresh(self):
         self._switch_to_frame()
         time1 = time.time()
-        while(time.time() - time1 < 2 * 60):
+        while time.time() - time1 < 2 * 60:
             try:
                 self.browser.click(self.REFRESH)
                 print "* Clicking at 'Обновить'"
@@ -586,37 +590,21 @@ class FrameAction(Frame):
             except WebDriverException:
                 time.sleep(1)
 
-    def __get_take_off_items(self):
-        sleep(0.5)
-        return self.browser.find_elements((By.XPATH, u"//img[contains(@title, 'Снять')]"))
-
     def _get_item_ids(self):
-        ids = []
-        elements = self.__get_take_off_items()
-        for e in elements:
-            _id = get_number_from_text(self.browser.get_attribute(e, "onclick"))
-            ids.append(_id)
-
-        return ids
+        sleep(0.5)
+        elements = self.browser.find_elements((By.CSS_SELECTOR, u"[onclick *= 'actUnWear']"))
+        return [get_number_from_text(self.browser.get_attribute(e, "onclick")) for e in elements]
 
     def _take_off_all_items(self):
-        ids = []
-        elements = self.__get_take_off_items()
-        while(len(elements) > 0):
-            e = elements[0]
+        taken_off_ids = []
+        ids = self._get_item_ids()
+        for _id in ids:
+            self.browser.mouse.left_click_by_offset((By.CSS_SELECTOR, u"[onclick *= 'actUnWear(%s)']" % _id), -5, -5)
+            # self.browser.click(e)
+            print "Снимаю вещь id='%s'" % _id
+            taken_off_ids.append(_id)
 
-            try:
-                _id = get_number_from_text(self.browser.get_attribute(e, "onclick"))
-
-                self.browser.click(e)
-                print "Снимаю вещь id='%s'" % _id
-                ids.append(_id)
-            except WebDriverException:
-                traceback.print_exc()
-
-            elements = self.__get_take_off_items()
-
-        return ids
+        return taken_off_ids
 
     def __get_ids_in_current_cat(self):
         item = (By.CSS_SELECTOR, "table.item tr.item input[name*='actUser-Wear']")
@@ -656,15 +644,15 @@ class FrameAction(Frame):
                  self.HOME_BRACES, self.HOME_RINGS
                  ]
 
-        while(True):
+        while True:
             try:
                 for cat in categories:
                     self.browser.click(cat)
                     sleep(0.5)
                     ids_in_cat = self.__get_ids_in_current_cat()
-                    for _id in ids:
-                        if _id in ids_in_cat:
-                            self.__put_on(_id)
+                    for id_in_cat in ids_in_cat:
+                        if id_in_cat in ids:
+                            self.__put_on(id_in_cat)
                 break
             except:
                 print_exception()
@@ -803,9 +791,7 @@ class FrameAction(Frame):
             full_repair = (By.CSS_SELECTOR, u"input[value='Чинить']")
             return self.browser.find_elements(full_repair)
 
-        before = 0
-        after = 0
-        while(True):
+        while True:
             btns = get_btns()
             before = len(btns)
             print before
@@ -826,6 +812,7 @@ class FrameAction(Frame):
         self._click_smithy()
         self._repair_all_items()
         self._click_main_square()
+
 
 class FrameFight(FrameAction):
     TIME_LEFT = (By.ID, "time_left")

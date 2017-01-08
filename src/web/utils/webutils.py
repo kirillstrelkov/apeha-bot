@@ -12,7 +12,8 @@ def get_browser():
     if not __BROWSER:
         try:
             __BROWSER = Browser('gc', logger=LOGGER)
-        except:
+        except Exception as e:
+            print(e)
             __BROWSER = Browser(logger=LOGGER)
     
     return __BROWSER

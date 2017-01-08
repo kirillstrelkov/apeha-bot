@@ -201,6 +201,7 @@ class ApehaBot(object):
                     if len(get_browser()._driver.window_handles) > 1:
                         get_browser().close_current_window_and_focus_to_previous_one()
                         get_browser().switch_to_default_content()
+                    f_action._stand_up_from_chair()
         except StopException:
             print u"Бот остановлен"
 
@@ -262,14 +263,13 @@ class FightBot(object):
 
     def __use_mana(self, players):
         self.to_stop()
-        cur_num_of_emenies = len(players.enemy_team)
+        cur_num_of_enemies = len(players.enemy_team)
         cur_num_of_aliases = len(players.my_team)
-        enemies_are_cloning = cur_num_of_emenies > len(players.enemy_originals)
+        enemies_are_cloning = cur_num_of_enemies > len(players.enemy_originals)
         aliases_are_cloning = cur_num_of_aliases >= len(players.alias_originals)
         have_alias = cur_num_of_aliases > 1
-        return have_alias and (enemies_are_cloning and aliases_are_cloning
-                               or aliases_are_cloning
-                               and cur_num_of_aliases / float(cur_num_of_emenies) < 2.0)
+        return have_alias and (enemies_are_cloning and aliases_are_cloning or
+                               aliases_are_cloning and cur_num_of_aliases / float(cur_num_of_enemies) < 2.0)
 
     def fight(self, name, astral_level, block_ids):
         self.to_stop()
@@ -279,11 +279,10 @@ class FightBot(object):
         useless_rounds = 0
 
         fcc = FrameCreateClone(self.f_fight, self.default_settings)
-        players = None
         team_color = None
 
         hp_cur = self.f_info.get_hp_cur_and_max()[0]
-        while(hp_cur > 0):
+        while hp_cur > 0:
             self.to_stop()
             if not tactics_is_set:
                 tactics_is_set = self.__select_tactics_if_needed()
@@ -307,7 +306,7 @@ class FightBot(object):
             if self.__use_mana(players):
                 try:
                     if (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_CLONE and
-                        hp_rate >= self.default_settings.fighting_settings.MIN_HP_RATIO):
+                            hp_rate >= self.default_settings.fighting_settings.MIN_HP_RATIO):
                         cur_astral_level = self.__select_next_astral_and_is_in_astral(cur_astral_level, astral_level)
                         in_astral = cur_astral_level > 0
 
@@ -332,7 +331,7 @@ class FightBot(object):
             self.to_stop()
             self.f_fight.wait_for_round_ended()
 
-        while(self.f_fight.is_fighting() and in_astral):
+        while self.f_fight.is_fighting() and in_astral:
             self.to_stop()
             in_astral = self.__select_previous_astral_and_is_in_astral()
             time.sleep(self.default_settings.timeouts.ASTRAL_REFRESH_TIMEOUT)

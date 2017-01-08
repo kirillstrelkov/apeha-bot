@@ -356,9 +356,13 @@ class ApehaBotUI(Frame):
             obj.SetValue(True)
 
 
-
 if __name__ == '__main__':
     app = App(False)
     frame = ApehaBotUI(None)
     frame.Show()
     app.MainLoop()
+
+# увеличить скорость парсинга поля 8х8
+# выбор боя выбирать - на 1:00, 0:30 -для алмазных
+# сделать один																																											 exe файл
+# если на стули - встать
