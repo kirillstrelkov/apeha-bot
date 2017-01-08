@@ -293,9 +293,11 @@ class ApehaBotUI(Frame):
             and ids_correct
 
     def __on_stop_and_quit(self, e):
-        self.apeha_bot.stop_event.set()
+        if self.apeha_bot.stop_event:
+            self.apeha_bot.stop_event.set()
+
         def wait_for_thread_ends():
-            while(self.running_thread.is_alive()):
+            while self.running_thread.is_alive():
                 pass
             self.btn_start.Enable()
             self.__enable_fields()
