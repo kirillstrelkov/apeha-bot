@@ -3,13 +3,13 @@
 #### УСТАНОВКА КОМПОНЕНТОВ:
 0. Установите Google Chrome если не установлен
 1. Скачайте драйвер для Google Chrome
- 1. chromedriver: https://sites.google.com/a/chromium.org/chromedriver/downloads
- **для Windows существует только один chromedriver - 32-битный**
+ 1. chromedriver: https://sites.google.com/a/chromium.org/chromedriver/downloads (**для Windows существует только один chromedriver - 32-битный**)
  2. распакуйте и поместить 'chromedriver.exe' в папку пользователя(пример: C:\Users\max)
 
 #### ЗАПУСК БОТА
 **NB**: Бот не поддерживает Flash - необходимо отключить Flash пароль в Арене
-1. Скачать архив с приложением: [/build/apehabot_ui_win64.zip]
+
+1. Скачать архив с приложением: [apehabot_ui_win64.zip](/build/apehabot_ui_win64.zip)
 2. Распаковать
 3. Запустить **apehabot_ui.exe**
 4. Ввести ник и пароль
