@@ -257,7 +257,7 @@ class FramePersInfo(Frame):
 
 
 class FrameCreateClone(RootBrowser):
-    CREATE_CLONE = (By.CSS_SELECTOR, u"input[value='Применить \"Создать клон\"']")
+    CREATE_CLONE = (By.CSS_SELECTOR, u"input[onclick*='MakeCast']")
     MAP = (By.ID, "mapspan")
     IMG_PLAYER = (By.CSS_SELECTOR, "#mapspan img")
 
