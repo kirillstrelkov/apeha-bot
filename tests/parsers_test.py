@@ -1,8 +1,8 @@
 # encoding=utf8
 import codecs
 from unittest.case import TestCase
-from src.apeha.market.text.parsers import LineParser
-from src.apeha.market.parsers.jewelry_parser import JewerlyParser
+
+from src.apeha.market.parsers import LineParser, JewerlyParser
 from src.apeha.utils import unicode_str
 
 

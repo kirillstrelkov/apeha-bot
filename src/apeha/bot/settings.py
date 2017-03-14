@@ -1,14 +1,13 @@
 # encoding=utf8
+import codecs
 import os
 import pickle
-import codecs
-
 
 INJURIES_AND_ROLLS = {
-                      u"Легкая травма": u"Лечение легкой травмы",
-                      u"Средняя травма": u"Лечение средней травмы",
-                      u"Тяжелая травма": u"Лечение тяжелой травмы",
-                      }
+    u"Легкая травма": u"Лечение легкой травмы",
+    u"Средняя травма": u"Лечение средней травмы",
+    u"Тяжелая травма": u"Лечение тяжелой травмы",
+}
 
 
 class ClonePlacement(object):
@@ -18,7 +17,7 @@ class ClonePlacement(object):
     TO_EMENIES_TOP = u"Ставить клонов к противникам начиная сверху"
     TO_EMENIES_BOTTOM = u"Ставить клонов к противникам начиная снизу"
     TO_EMENIES_RANDOM = u"Ставить клонов к противникам рандомно"
-    ALL = [TO_ALIASES_ME_FIRST, TO_ALIASES_TOP, TO_ALIASES_RANDOM, 
+    ALL = [TO_ALIASES_ME_FIRST, TO_ALIASES_TOP, TO_ALIASES_RANDOM,
            TO_EMENIES_TOP, TO_EMENIES_BOTTOM, TO_EMENIES_RANDOM]
 
 
@@ -66,6 +65,7 @@ class _FightingSettings(object):
 
 class BotSettings(object):
     FILEPATH = os.path.join(os.path.expanduser("~"), '.settings_apehapy')
+
     # main settings which should be used everywhere
     def __init__(self):
         self.fighting_settings = _FightingSettings()

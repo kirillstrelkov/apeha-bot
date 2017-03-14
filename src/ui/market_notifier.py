@@ -4,19 +4,18 @@ import pynotify
 import time
 from random import randint
 from threading import Thread, Event
-
-from src.web.views.frames import ApehaMain, FrameAction
-from src.web.views.market import MarketAction, MarketChat
-
-from wx._windows import Frame
+from wx._controls import TextCtrl, TE_MULTILINE, TE_READONLY, Button, \
+    StaticBox, TE_DONTWRAP, CheckBox
 from wx._core import BoxSizer, VERTICAL, HORIZONTAL, \
     EXPAND, StaticBoxSizer, EVT_BUTTON, EVT_CLOSE, \
     CallAfter, EVT_CHECKBOX
-from wx._controls import TextCtrl, TE_MULTILINE, TE_READONLY, Button, \
-    StaticBox, TE_DONTWRAP, CheckBox
-from src.web.views.smithy import SmithyChat
-from src.web.utils.webutils import get_browser
+from wx._windows import Frame
+
 from src.apeha.bot.settings import BotSettings
+from src.web.utils.webutils import get_browser
+from src.web.views.frames import ApehaMain, FrameAction
+from src.web.views.market import MarketChat
+from src.web.views.smithy import SmithyChat
 
 
 class Notifier(Frame):
@@ -141,7 +140,7 @@ class Notifier(Frame):
         if len(chats) == 1:
             go_to(chats[0] == mchat)
 
-        while(not self.event.is_set()):
+        while (not self.event.is_set()):
             for chat in chats:
                 if len(chats) > 1:
                     action._click_main_square()

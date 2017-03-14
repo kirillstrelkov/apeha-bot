@@ -1,8 +1,9 @@
-from unittest.case import TestCase
-from src.apeha.bot.settings import BotSettings, save_settings, get_settings
+import os
 import pickle
 import tempfile
-import os
+from unittest.case import TestCase
+
+from src.apeha.bot.settings import BotSettings, save_settings, get_settings
 
 
 class SettingsTest(TestCase):

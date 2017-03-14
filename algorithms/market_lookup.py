@@ -8,7 +8,7 @@ root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if root not in os.sys.path:
     os.sys.path.append(root)
 
-from src.apeha.market.ui.market_notifier import Notifier
+from src.ui.market_notifier import Notifier
 from wx._core import App
 
 

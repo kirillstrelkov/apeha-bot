@@ -10,7 +10,6 @@ if root not in os.sys.path:
     os.sys.path.append(root)
 os.sys.path.append(os.path.abspath(os.curdir))
 
-
 from wx._core import App, BoxSizer, VERTICAL, HORIZONTAL, ALL, EXPAND, \
     StaticBoxSizer, EVT_CHECKBOX, CB_READONLY, \
     CallAfter, EVT_BUTTON
@@ -73,7 +72,8 @@ class ApehaBotUI(Frame):
         self.cb_atral_level = ComboBox(self, style=CB_READONLY)
         for level in self.settings.fighting_settings.ASTRAL_LEVELS:
             self.cb_atral_level.Append(unicode_str(level))
-        self.cb_atral_level.Select(self.settings.fighting_settings.ASTRAL_LEVELS.index(self.settings.default_astral_level))
+        self.cb_atral_level.Select(
+            self.settings.fighting_settings.ASTRAL_LEVELS.index(self.settings.default_astral_level))
         hbox.Add(label, 1, flag=ALL, border=4)
         hbox.Add(self.cb_atral_level, 2)
         sizer.Add(hbox, flag=EXPAND)
@@ -89,7 +89,7 @@ class ApehaBotUI(Frame):
         hbox.Add(label, 1, flag=ALL, border=4)
         hbox.Add(self.cb_tactics, 2)
         sizer.Add(hbox, flag=EXPAND)
-        
+
         hbox = BoxSizer(HORIZONTAL)
         label = StaticText(self)
         label.SetLabel(u"Ставить клонов:")
@@ -178,7 +178,7 @@ class ApehaBotUI(Frame):
         self.Bind(EVT_CHECKBOX, self.__on_cb, self.cb13)
         self.Bind(EVT_CHECKBOX, self.__on_cb, self.cb14)
 
-#         sizer.AddStretchSpacer()
+        #         sizer.AddStretchSpacer()
 
         hbox = BoxSizer(HORIZONTAL)
         self.btn_stop_and_quit = Button(self)
@@ -186,9 +186,9 @@ class ApehaBotUI(Frame):
         self.btn_stop_and_quit.Disable()
         self.Bind(EVT_BUTTON, self.__on_stop_and_quit, self.btn_stop_and_quit)
         hbox.Add(self.btn_stop_and_quit, 2)
-#         self.btn_stop = Button(self)
-#         self.btn_stop.SetLabel(u"Остановить бота")
-#         hbox.Add(self.btn_stop, 1)
+        #         self.btn_stop = Button(self)
+        #         self.btn_stop.SetLabel(u"Остановить бота")
+        #         hbox.Add(self.btn_stop, 1)
         hbox.AddStretchSpacer()
         self.btn_start = Button(self)
         self.btn_start.SetLabel(u"Запустить бота")
@@ -260,17 +260,17 @@ class ApehaBotUI(Frame):
         cbs_right = [self.cb10, self.cb11, self.cb12, self.cb13, self.cb14]
 
         cbs_and_ids = {
-                       self.cb00: "00",
-                       self.cb01: "01",
-                       self.cb02: "02",
-                       self.cb03: "03",
-                       self.cb04: "04",
-                       self.cb10: "10",
-                       self.cb11: "11",
-                       self.cb12: "12",
-                       self.cb13: "13",
-                       self.cb14: "14"
-                       }
+            self.cb00: "00",
+            self.cb01: "01",
+            self.cb02: "02",
+            self.cb03: "03",
+            self.cb04: "04",
+            self.cb10: "10",
+            self.cb11: "11",
+            self.cb12: "12",
+            self.cb13: "13",
+            self.cb14: "14"
+        }
         ids = []
         for cb in cbs_left + cbs_right:
             if cb.IsChecked():
@@ -288,9 +288,9 @@ class ApehaBotUI(Frame):
             ids_correct = self.cb_my_tactics.IsChecked() == False
 
         return len(username) > 0 \
-            and len(password) > 0 \
-            and type(astral_level) == int \
-            and ids_correct
+               and len(password) > 0 \
+               and type(astral_level) == int \
+               and ids_correct
 
     def __on_stop_and_quit(self, e):
         if self.apeha_bot.stop_event:
@@ -330,7 +330,8 @@ class ApehaBotUI(Frame):
     def __on_cb(self, e):
         cbs_left = [self.cb00, self.cb01, self.cb02, self.cb03, self.cb04]
         cbs_right = [self.cb10, self.cb11, self.cb12, self.cb13, self.cb14]
-        def  reset(cbs):
+
+        def reset(cbs):
             for cb in cbs:
                 cb.SetValue(False)
 
@@ -364,7 +365,7 @@ if __name__ == '__main__':
     frame.Show()
     app.MainLoop()
 
-# увеличить скорость парсинга поля 8х8
-# выбор боя выбирать - на 1:00, 0:30 -для алмазных
-# сделать один																																											 exe файл
-# если на стули - встать
+    # увеличить скорость парсинга поля 8х8
+    # выбор боя выбирать - на 1:00, 0:30 -для алмазных
+    # сделать один																																											 exe файл
+    # если на стули - встать

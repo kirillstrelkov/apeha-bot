@@ -3,5 +3,6 @@ tests/autobot/local_test.py
 tests/autobot/main_test.py
 tests/autobot/htmls_test.py
 *.pyc
+/algorithms/credentials.py
 *~
 .idea

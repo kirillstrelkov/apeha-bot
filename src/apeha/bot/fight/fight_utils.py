@@ -1,9 +1,9 @@
 # encoding=utf8
 
 import re
-from src.apeha.bot.settings import SpellTexts
-from src.apeha.utils import unicode_str
 from pprint import pformat
+
+from src.apeha.bot.settings import SpellTexts
 
 
 class Team(object):
@@ -23,6 +23,7 @@ class Players(object):
     def __str__(self):
         return pformat(self.__dict__)
 
+
 class PlayerNeighbours(object):
     """
         Hold information about current coordinates and 6 other neighbours.
@@ -31,7 +32,7 @@ class PlayerNeighbours(object):
             D            C
     """
     RADIUS = 20
-    
+
     def __init__(self):
         x, y = 0, 0
         big_radius = int(1.5 * self.RADIUS)
@@ -49,7 +50,7 @@ class PlayerNeighbours(object):
 
 class Application(object):
     def __init__(self, min_level, max_level, max_size, players, _type, _map, obstacle, timout, webelement=None):
-        self.webelement = webelement 
+        self.webelement = webelement
         self.min_level = min_level
         self.max_level = max_level
         self.max_size = max_size
@@ -60,26 +61,28 @@ class Application(object):
         self.size = len(players)
         self.timeout = timout
         self.avg_rating = self.__get_avg_rating()
-    
+
     def __get_avg_rating(self):
         ratings = []
         for player in self.players:
             found = re.findall("\[(\d+)\]", player)
             if found and len(found) > 0:
                 ratings.append(int(found[0]))
-        
-        return sum(ratings)/float(len(ratings))
-    
+
+        return sum(ratings) / float(len(ratings))
+
     def __str__(self):
-        return u"\n".join(['%s' % i for i in [self.min_level, self.max_level, self.type, self.map, self.obstacle, self.size, self.players]]).encode('utf8')
+        return u"\n".join(['%s' % i for i in
+                           [self.min_level, self.max_level, self.type, self.map, self.obstacle, self.size,
+                            self.players]]).encode('utf8')
 
 
 def create_application(left_text, right_text):
     players = left_text.splitlines()
     rlines = right_text.splitlines()
-    
+
     max_size = int(re.search('/(\d+)', rlines[0]).group(1))
-    
+
     cols = rlines[1].split()
     r = re.search('(\d+)-(\d+)', cols[0])
     min_level = int(r.group(1))
@@ -87,7 +90,7 @@ def create_application(left_text, right_text):
     _type = cols[1]
     obstacle = len(cols) > 2
     _map = rlines[2]
-    
+
     if len(rlines) > 3:
         found = re.findall(u'На ход\s*(\d+):(\d+)', rlines[-1])
         if found and len(found) > 0:
@@ -96,15 +99,15 @@ def create_application(left_text, right_text):
             _min, sec = 3, 0
     else:
         _min, sec = 3, 0
-    
-    return Application(min_level, max_level, max_size, players, 
+
+    return Application(min_level, max_level, max_size, players,
                        _type, _map, obstacle, int(_min) * 60 + int(sec))
 
 
 def get_best_application(apps, min_level, unwanted_player=None):
     if not unwanted_player:
         unwanted_player = []
-    apps2 = filter(lambda x: x.min_level >= min_level - 1 and x.timeout > 30 and x.max_size  > 3, apps)
+    apps2 = filter(lambda x: x.min_level >= min_level - 1 and x.timeout > 30 and x.max_size > 3, apps)
     apps = []
     for app in apps2:
         is_good_app = True
@@ -115,12 +118,12 @@ def get_best_application(apps, min_level, unwanted_player=None):
             is_good_app = is_good_app and player not in unwanted_player
             if not is_good_app:
                 break
-        
+
         if is_good_app:
             apps.append(app)
-    
+
     apps = sorted(apps, key=lambda x: (x.avg_rating, x.size, -x.max_size))
-    
+
     if len(apps) > 0:
         return apps[-1]
     else:
@@ -129,9 +132,9 @@ def get_best_application(apps, min_level, unwanted_player=None):
 
 def get_astral_level_from(text):
     current_lvl = SpellTexts.CURRENT_ASTRAL_LVL_TEXT + u" (\d+)"
-    r = re.search(current_lvl, text)
-    if r:
-        return int(r.group(1))
+    match = re.search(current_lvl, text)
+    if match:
+        return int(match.group(1))
     else:
         return None
 
@@ -139,19 +142,19 @@ def get_astral_level_from(text):
 def get_nicknames(text):
     lines = text.split("]")
     nicknames = []
-    
+
     for line in lines:
         match = re.search("\w{2} (.+) \d+ \[", line)
         if match and match.groups() > 0:
             nicknames.append(match.group(1))
-    
+
     return nicknames
 
 
 def get_time_left_in_seconds(text):
     nums = re.findall("\d+", text)
     if len(nums) == 2:
-        mins, secs = int(nums[0]), int(nums[1]) 
+        mins, secs = int(nums[0]), int(nums[1])
         return mins * 60 + secs
     else:
         return 0

@@ -1,25 +1,24 @@
 # encoding=utf8
 
+import random
 import re
 import time
-import random
-import traceback
+from time import sleep
 
-from selenium.webdriver.common.by import By
+from easyselenium.utils import get_random_value
 from selenium.common.exceptions import WebDriverException, \
     StaleElementReferenceException
+from selenium.webdriver.common.by import By
 
-from src.apeha.utils import get_number_from_text, print_exception, unicode_str,\
-    get_float_from_text
-from src.web.utils.webutils import get_browser
-from src.apeha.bot.info import PlayerInfo
-from easyselenium.utils import get_random_value
-from src.apeha.bot.settings import SpellTexts, INJURIES_AND_ROLLS,\
-    ClonePlacement
 from src.apeha.bot.fight.fight_utils import get_nicknames, \
     PlayerNeighbours, get_astral_level_from, create_application, \
     get_time_left_in_seconds, Players, Team
-from time import sleep
+from src.apeha.bot.info import PlayerInfo
+from src.apeha.bot.settings import SpellTexts, INJURIES_AND_ROLLS, \
+    ClonePlacement
+from src.apeha.utils import get_number_from_text, print_exception, unicode_str, \
+    get_float_from_text
+from src.web.utils.webutils import get_browser
 
 
 class RootBrowser(object):
@@ -231,13 +230,12 @@ class FramePersInfo(Frame):
 
     def __cast_spell(self, create_clone=True):
         def click(e):
-            while(True):
+            while (True):
                 try:
                     self.browser.click(e)
                     return
                 except StaleElementReferenceException:
                     pass
-
 
         self._switch_to_frame()
         self.browser.wait_for_visible(self.MAG_BOOK)
@@ -277,7 +275,7 @@ class FrameCreateClone(RootBrowser):
         self.frame._click_refresh()
         text = self.browser.get_text(self.NICKNAMES)
         nicknames = get_nicknames(text)
-#         print "refresh"
+        #         print "refresh"
         w_and_s = {}
 
         for nickname in nicknames:
@@ -289,13 +287,13 @@ class FrameCreateClone(RootBrowser):
 
         selectors = []
         try:
-#             print w_and_s.keys()
+            #             print w_and_s.keys()
             sorted_keys = sorted(w_and_s.keys(), key=lambda x: x.location['y'])
-#             print sorted_keys
+            #             print sorted_keys
             for key in sorted_keys:
                 selectors.append(w_and_s[key])
         except Exception:
-#             print e
+            #             print e
             print "Can't sort"
 
         if len(selectors) == 0:
@@ -343,7 +341,7 @@ class FrameCreateClone(RootBrowser):
 
     def __get_players(self, team):
         players = self._get_players_with_clones()
-#         print players
+        #         print players
 
         all_players = []
         enemy_team = []
@@ -351,7 +349,7 @@ class FrameCreateClone(RootBrowser):
         enemy_originals = []
         alias_originals = []
 
-#         print "here1"
+        #         print "here1"
         for player in players:
             if self.browser.is_visible(player):
                 all_players.append(player)
@@ -369,13 +367,13 @@ class FrameCreateClone(RootBrowser):
                     else:
                         enemy_team.append(player)
                         enemy_originals.append(player)
-#         print "here2"
+                    #         print "here2"
 
-#         print "all_players", all_players
-#         print "enemy_team", enemy_team
-#         print "my_team", my_team
-#         print "enemy_originals", enemy_originals
-#         print "alias_originals", alias_originals
+                    #         print "all_players", all_players
+                    #         print "enemy_team", enemy_team
+                    #         print "my_team", my_team
+                    #         print "enemy_originals", enemy_originals
+                    #         print "alias_originals", alias_originals
         return Players(team, all_players, enemy_team, my_team, enemy_originals, alias_originals)
 
     def __get_css_selector_for_player_by_name(self, nickname):
@@ -413,13 +411,13 @@ class FrameCreateClone(RootBrowser):
     def __get_team_color(self, element):
         self.frame._switch_to_frame()
         if not self.browser.is_visible(element):
-#             print not self.browser.is_present(element), not self.browser.is_visible(element), element
+            #             print not self.browser.is_present(element), not self.browser.is_visible(element), element
             return None
 
         text = self.browser.get_attribute(element, "src")
-#         print element, text
-#         print "pbm1" in text , "pb1" in text
-#         print "pbm0" in text , "pb0" in text
+        #         print element, text
+        #         print "pbm1" in text , "pb1" in text
+        #         print "pbm0" in text , "pb0" in text
         if "pbm1" in text or "pb1" in text:
             return Team.RED
         elif "pbm0" in text or "pb0" in text:
@@ -489,22 +487,22 @@ class FrameCreateClone(RootBrowser):
 
 
 class FrameAstral(RootBrowser):
-    __ASTRAL_GO_TO_NEXT = (By.CSS_SELECTOR, u"input[value='Перейти на %d слой']")
-    __ASTRAL_EXIT = (By.CSS_SELECTOR, u"input[value='Выйти из астрала']")
-    __CURE_INJURY = u"Вылечить травму"
-    __APPLY = u"input[value='Применить']"
+    ASTRAL_GO_TO_NEXT = (By.CSS_SELECTOR, u"input[value='Перейти на %d слой']")
+    ASTRAL_EXIT = (By.CSS_SELECTOR, u"input[value='Выйти из астрала']")
+    CURE_INJURY = u"Вылечить травму"
+    APPLY = u"input[value='Применить']"
 
     def __init__(self, settings):
         RootBrowser.__init__(self, settings)
 
     def cure_injury(self):
-        trs = self.browser.find_elements((By.CSS_SELECTOR, "table tr"))
+        trs = self.browser.find_elements((By.CSS_SELECTOR, "table.item tr"))
 
-        for t in trs:
-            if self.browser.is_visible(t) and self.__CURE_INJURY in self.browser.get_text(t):
-                index = trs.index(t)
+        for tr in trs:
+            if self.browser.is_visible(tr) and self.CURE_INJURY in self.browser.get_text(tr):
+                index = trs.index(tr)
 
-                e = trs[index + 1].find_elements(By.CSS_SELECTOR, self.__APPLY)
+                e = self.browser.find_descendants(trs[index + 1], (By.CSS_SELECTOR, self.APPLY))
                 if len(e) > 0:
                     self.browser.click(e[0])
                 break
@@ -522,9 +520,9 @@ class FrameAstral(RootBrowser):
 
     def click_astral_level(self, level):
         if level == 0:
-            self.browser.click(self.__ASTRAL_EXIT)
+            self.browser.click(self.ASTRAL_EXIT)
         else:
-            selector = self.__ASTRAL_GO_TO_NEXT[0], self.__ASTRAL_GO_TO_NEXT[1] % level
+            selector = self.ASTRAL_GO_TO_NEXT[0], self.ASTRAL_GO_TO_NEXT[1] % level
             self.browser.click(selector)
 
 
@@ -637,12 +635,12 @@ class FrameAction(Frame):
 
     def _put_on_by_ids(self, ids):
         categories = [
-                 self.HOME_AMULETS, self.HOME_HELMETS, self.HOME_AMULETS,
-                 self.HOME_ARMORS,
-                 self.HOME_GLOVES, self.HOME_BELTS, self.HOME_SHIELDS,
-                 self.HOME_ARMS, self.HOME_BOOTS, self.HOME_RINGS,
-                 self.HOME_BRACES, self.HOME_RINGS
-                 ]
+            self.HOME_AMULETS, self.HOME_HELMETS, self.HOME_AMULETS,
+            self.HOME_ARMORS,
+            self.HOME_GLOVES, self.HOME_BELTS, self.HOME_SHIELDS,
+            self.HOME_ARMS, self.HOME_BOOTS, self.HOME_RINGS,
+            self.HOME_BRACES, self.HOME_RINGS
+        ]
 
         while True:
             try:
@@ -707,8 +705,8 @@ class FrameAction(Frame):
                     sleep(0.5)
                     rooms = self.browser.find_elements(self.CASTLE_ROOMS)
                     for room in rooms:
-                        if (self.browser.is_visible(room) and 
-                            u"Тронный зал" == self.browser.get_text(room)):
+                        if (self.browser.is_visible(room) and
+                                    u"Тронный зал" == self.browser.get_text(room)):
                             self.browser.click(room.find_element(By.TAG_NAME, u"input"))
                             break
 
@@ -760,8 +758,10 @@ class FrameAction(Frame):
     def _create_application(self, level):
         self._switch_to_frame()
         self.browser.select_option_by_text_from_dropdown(self.APP_MIN_LEVEL, unicode_str(level))
-        self.browser.select_option_by_text_from_dropdown(self.APP_NUM_PLAYERS, unicode_str(self.settings.fighting_settings.APP_NUMBER_OF_PLAYERS))
-        self.browser.select_option_by_value_from_dropdown(self.APP_TIMEOUT, unicode_str(self.settings.timeouts.APP_TIMEOUT))
+        self.browser.select_option_by_text_from_dropdown(self.APP_NUM_PLAYERS, unicode_str(
+            self.settings.fighting_settings.APP_NUMBER_OF_PLAYERS))
+        self.browser.select_option_by_value_from_dropdown(self.APP_TIMEOUT,
+                                                          unicode_str(self.settings.timeouts.APP_TIMEOUT))
         self.browser.click(self.APP_APPLY)
 
     def _cure_with_roll(self, injury):
@@ -800,7 +800,7 @@ class FrameAction(Frame):
                 if self.browser.is_visible(btn):
                     self.browser.click(btn)
                     after = len(get_btns())
-#                     print before, after
+                    #                     print before, after
                     if before == after:
                         break
             else:
@@ -841,8 +841,8 @@ class FrameFight(FrameAction):
         print u"Жду начало боя"
         time1 = time.time()
 
-        while(not self.is_time_left_visible() and
-              (time.time() - time1 <= self.settings.timeouts.APPLICATION_WAIT_TIMEOUT)):
+        while (not self.is_time_left_visible() and
+                   (time.time() - time1 <= self.settings.timeouts.APPLICATION_WAIT_TIMEOUT)):
             time.sleep(self.settings.timeouts.WAIT_FOR_FIGHT_REFRESH_TIMEOUT)
 
     def is_attack_or_block_visible(self):
@@ -855,9 +855,9 @@ class FrameFight(FrameAction):
         hp_cur = self.f_pers.get_hp_cur_and_max()[0]
         self._switch_to_frame()
         time_spent = time.time() - time1
-        while(not self.browser.is_visible(self.ATTACK_OR_BLOCK) and
-              hp_cur > 0 and
-              time_spent <= self.settings.timeouts.FIGHT_TIMEOUT):
+        while (not self.browser.is_visible(self.ATTACK_OR_BLOCK) and
+                       hp_cur > 0 and
+                       time_spent <= self.settings.timeouts.FIGHT_TIMEOUT):
             time.sleep(1)
             if int(time_spent) % (1 * 30) <= 2 and self.browser.is_visible(self.REFRESH):
                 self._click_refresh()
@@ -888,7 +888,7 @@ class FrameFight(FrameAction):
         self._switch_to_frame()
         print u"Жду конца боя"
 
-        while(self.is_fighting()):
+        while (self.is_fighting()):
             time.sleep(self.settings.timeouts.FIGHT_TIMEOUT)
             if self.browser.is_visible(self.REFRESH):
                 self.browser.click(self.REFRESH)
@@ -909,7 +909,7 @@ class FrameFight(FrameAction):
 
     def _select_blocks_randomly(self):
         ticks = self.browser.find_elements(self.BLOCKING_TICK)
-        left_ticks = [t for t in ticks if  self.browser.get_attribute(t, 'id').startswith("bl0")]
+        left_ticks = [t for t in ticks if self.browser.get_attribute(t, 'id').startswith("bl0")]
 
         tick1 = get_random_value(left_ticks)
         tick2 = get_random_value(left_ticks, tick1)
@@ -919,7 +919,7 @@ class FrameFight(FrameAction):
         idt2 = self.browser.get_attribute(tick2, 'id')
         for t in ticks:
             _id = self.browser.get_attribute(t, 'id')
-            if  _id.startswith("bl1") and idt1[-1] != _id[-1] and _id[-1] != idt2[-1]:
+            if _id.startswith("bl1") and idt1[-1] != _id[-1] and _id[-1] != idt2[-1]:
                 right_ticks.append(t)
 
         tick3 = get_random_value(right_ticks)
@@ -941,9 +941,10 @@ class FrameFight(FrameAction):
 
     def block_myself(self, block_ids):
         if self.is_fighting():
-            while(not self.browser.is_visible(self.APPLY)):
+            while (not self.browser.is_visible(self.APPLY)):
                 self.browser.click(self.ATTACK_OR_BLOCK)
             self._apply_blocks(block_ids)
+
 
 class FrameChat(Frame):
     MESSAGES = (By.CSS_SELECTOR, u"#messages")

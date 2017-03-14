@@ -3,15 +3,15 @@
 import time
 import traceback
 from threading import Event
+
 from selenium.common.exceptions import WebDriverException
 
-from src.web.utils.webutils import get_browser
-
-from src.web.views.frames import FramePersInfo, ApehaMain, FrameAction, \
-    FrameFight, FrameCreateClone
-from src.apeha.utils import print_exception
 from src.apeha.bot.fight.fight_utils import get_best_application
 from src.apeha.bot.settings import BotSettings, save_settings
+from src.apeha.utils import print_exception
+from src.web.utils.webutils import get_browser
+from src.web.views.frames import FramePersInfo, ApehaMain, FrameAction, \
+    FrameFight, FrameCreateClone
 
 
 class StopException(Exception):
@@ -104,7 +104,7 @@ class ApehaBot(object):
             if rating != f_info.get_rating() and len(item_ids) > 0:
                 cash = f_info.get_cash()
                 if cash and len(cash) == 2 and cash[-1] > 0:
-                    print u"Найденно %f синих соткок на руках" % cash[-1] 
+                    print u"Найденно %f синих соткок на руках" % cash[-1]
                     print u"!!!Починку предметов пропускаю!!!"
                 else:
                     f_action.repair_items()
@@ -118,7 +118,7 @@ class ApehaBot(object):
         if not is_full:
             print u"Жду восстановления жизней и маны"
 
-        while(not is_full):
+        while (not is_full):
             time.sleep(self.default_settings.timeouts.PERS_READY_TIMEOUT)
             is_full = f_info.is_ready_to_fight()
 
@@ -131,7 +131,8 @@ class ApehaBot(object):
             traceback.print_exc()
             raise Exception(u"Не могу залогиниться")
 
-    def _start_and_end_fight(self, f_action, f_info, f_fight, fight_bot, name, item_ids, rating, astral_level, block_ids):
+    def _start_and_end_fight(self, f_action, f_info, f_fight, fight_bot, name, item_ids, rating, astral_level,
+                             block_ids):
         self.to_stop()
         print u"Бой начался"
         try:
@@ -141,6 +142,12 @@ class ApehaBot(object):
         finally:
             f_fight.wait_for_fight_ended()
         f_fight.end_fight()
+
+    def __select_tactics_if_needed(self):
+        self.to_stop()
+        f_info = FramePersInfo(self.default_settings)
+        f_info.select_tactics(self.default_settings.default_tactics)
+        return True
 
     def run(self, username, password, astral_level, block_ids=None):
         try:
@@ -164,7 +171,7 @@ class ApehaBot(object):
 
             rating = f_info.get_rating()
             self.default_settings.rating = rating
-    
+
             save_settings(self.default_settings)
 
             while True:
@@ -189,7 +196,8 @@ class ApehaBot(object):
                     # Waiting for run started
                     f_fight.wait_for_fight()
                     if f_fight.is_time_left_visible():
-                        self._start_and_end_fight(f_action, f_info, f_fight, fight_bot, info.name, item_ids, rating, astral_level, block_ids)
+                        self._start_and_end_fight(f_action, f_info, f_fight, fight_bot, info.name, item_ids, rating,
+                                                  astral_level, block_ids)
                         self._repair_items_and_put_on(f_action, f_info, item_ids, rating)
                     else:
                         print u"Бой не начался пробую еще раз"
@@ -250,11 +258,6 @@ class FightBot(object):
         else:
             return True
 
-    def __select_tactics_if_needed(self):
-        self.to_stop()
-        self.f_info.select_tactics(self.default_settings.default_tactics)
-        return True
-
     def __to_freeze(self, players, num_of_enemies, num_of_aliases):
         self.to_stop()
         noe = len(players.enemy_team)
@@ -273,7 +276,6 @@ class FightBot(object):
 
     def fight(self, name, astral_level, block_ids):
         self.to_stop()
-        tactics_is_set = False
         in_astral = False
         cur_astral_level = 0
         useless_rounds = 0
@@ -284,8 +286,6 @@ class FightBot(object):
         hp_cur = self.f_info.get_hp_cur_and_max()[0]
         while hp_cur > 0:
             self.to_stop()
-            if not tactics_is_set:
-                tactics_is_set = self.__select_tactics_if_needed()
 
             mana_cur = self.f_info.get_mana_cur_and_max()[0]
             hp_cur, hp_max = self.f_info.get_hp_cur_and_max()
@@ -306,7 +306,7 @@ class FightBot(object):
             if self.__use_mana(players):
                 try:
                     if (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_CLONE and
-                            hp_rate >= self.default_settings.fighting_settings.MIN_HP_RATIO):
+                                hp_rate >= self.default_settings.fighting_settings.MIN_HP_RATIO):
                         cur_astral_level = self.__select_next_astral_and_is_in_astral(cur_astral_level, astral_level)
                         in_astral = cur_astral_level > 0
 
@@ -314,7 +314,7 @@ class FightBot(object):
                         fcc.create_clone(name, players, self.default_settings.clone_placement)
                         useless_rounds = 0
                     elif (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_HP and
-                          hp_rate < self.default_settings.fighting_settings.MIN_HP_RATIO):
+                                  hp_rate < self.default_settings.fighting_settings.MIN_HP_RATIO):
                         self.f_info.cast_fill_hp()
                         useless_rounds = 0
                 finally:

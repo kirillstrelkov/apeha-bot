@@ -1,10 +1,10 @@
 from easyselenium.browser import Browser
 from easyselenium.utils import Logger
 
-
 TIMEOUT = 7
 __BROWSER = None
 LOGGER = Logger()
+
 
 def get_browser():
     global __BROWSER
@@ -15,13 +15,13 @@ def get_browser():
         except Exception as e:
             print(e)
             __BROWSER = Browser(logger=LOGGER)
-    
+
     return __BROWSER
 
 
 def quit_browser():
     global __BROWSER
-    
+
     if __BROWSER:
         __BROWSER.quit()
         __BROWSER = None
