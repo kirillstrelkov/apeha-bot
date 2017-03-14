@@ -7,7 +7,7 @@
  2. распакуйте и поместить 'chromedriver.exe' в папку пользователя(пример: C:\Users\max)
 
 ### Windows используя exe файл
-##### Запуск бота
+#### Запуск бота
 **NB**: Бот не поддерживает Flash - необходимо отключить Flash пароль в Арене
 
 1. Скачать архив с приложением: [apehabot_ui_win64.zip](/build/apehabot_ui_win64.zip)
@@ -19,7 +19,7 @@
 7. Нажать "Запустить бота"
 
 ### Windows используя Python
-##### Установка необходимых компонентов:
+#### Установка необходимых компонентов:
 1. Скачать и установить Python **2.7**(NB: При установке выбрать все компоненты):
 https://www.python.org/downloads/
 2. Скачать и запустить:
@@ -37,7 +37,7 @@ http://www.wxpython.org/download.php
 
 Если обновился Google Chrome иногда необходимо обновить chromedriver
 
-##### Запуск бота
+#### Запуск бота
 
 0. Скачать [архив с кодом](https://github.com/kirillstrelkov/apeha-bot/archive/master.zip) и распаковать
 1. Запустить **apehabot_ui.py** который находится в src/apeha/bot/ui/
