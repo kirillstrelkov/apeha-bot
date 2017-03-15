@@ -1,9 +1,7 @@
 from easyselenium.browser import Browser
-from easyselenium.utils import Logger
 
 TIMEOUT = 7
 __BROWSER = None
-LOGGER = Logger()
 
 
 def get_browser():
@@ -11,10 +9,11 @@ def get_browser():
 
     if not __BROWSER:
         try:
-            __BROWSER = Browser('gc', logger=LOGGER)
+            # NOTE: LOGGER increases exec time
+            __BROWSER = Browser('gc')
         except Exception as e:
             print(e)
-            __BROWSER = Browser(logger=LOGGER)
+            __BROWSER = Browser()
 
     return __BROWSER
 

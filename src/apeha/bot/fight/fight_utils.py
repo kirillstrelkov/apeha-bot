@@ -4,6 +4,7 @@ import re
 from pprint import pformat
 
 from src.apeha.bot.settings import SpellTexts, _FightingSettings
+from src.apeha.utils import ApehaRegExp
 
 
 class Team(object):
@@ -114,7 +115,7 @@ def get_best_application(apps, min_level, unwanted_player=None):
     for app in filtered_apps:
         is_good_app = True
         for player in app.players:
-            player_name = re.sub(r'\s+\[\d+\]$', '', player)
+            player_name = re.sub(ApehaRegExp.NICKNAME_HP_ENDING, '', player)
             is_good_app = is_good_app and player_name not in unwanted_player
             if not is_good_app:
                 break

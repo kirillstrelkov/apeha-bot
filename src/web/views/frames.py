@@ -17,7 +17,7 @@ from src.apeha.bot.info import PlayerInfo
 from src.apeha.bot.settings import SpellTexts, INJURIES_AND_ROLLS, \
     ClonePlacement
 from src.apeha.utils import get_number_from_text, print_exception, unicode_str, \
-    get_float_from_text
+    get_float_from_text, ApehaRegExp
 from src.web.utils.webutils import get_browser
 
 
@@ -273,9 +273,8 @@ class FrameCreateClone(RootBrowser):
     def _get_players_with_clones(self):
         self.frame._switch_to_frame()
         self.frame._click_refresh()
-        text = self.browser.get_text(self.NICKNAMES)
+        text = self.browser.get_text(self.NICKNAMES, log=False)
         nicknames = get_nicknames(text)
-        #         print "refresh"
         w_and_s = {}
 
         for nickname in nicknames:
@@ -287,13 +286,10 @@ class FrameCreateClone(RootBrowser):
 
         selectors = []
         try:
-            #             print w_and_s.keys()
             sorted_keys = sorted(w_and_s.keys(), key=lambda x: x.location['y'])
-            #             print sorted_keys
             for key in sorted_keys:
                 selectors.append(w_and_s[key])
         except Exception:
-            #             print e
             print "Can't sort"
 
         if len(selectors) == 0:
@@ -318,7 +314,7 @@ class FrameCreateClone(RootBrowser):
         players = self._get_players_with_clones()
         player = self._get_player(nickname, players)
         team = self.__get_team_color(player)
-        return self.__get_players(team)
+        return self.__get_players(team, players)
 
     def _get_players_using_team(self, team):
         self.frame._switch_to_frame()
@@ -339,8 +335,9 @@ class FrameCreateClone(RootBrowser):
         else:
             return players.alias_originals
 
-    def __get_players(self, team):
-        players = self._get_players_with_clones()
+    def __get_players(self, team, players=None):
+        if not players:
+            players = self._get_players_with_clones()
         #         print players
 
         all_players = []
@@ -377,8 +374,6 @@ class FrameCreateClone(RootBrowser):
         return Players(team, all_players, enemy_team, my_team, enemy_originals, alias_originals)
 
     def __get_css_selector_for_player_by_name(self, nickname):
-        # selector = self.XPATH_IMG_BY_NICK % nickname
-        # return By.XPATH, selector
         selector = self.CSS_IMG_BY_NICK % nickname
         return By.CSS_SELECTOR, selector
 
@@ -398,26 +393,20 @@ class FrameCreateClone(RootBrowser):
         return player_team == my_team
 
     def __is_clone(self, player):
-        return self.CLONE_TEXT in self.browser.get_attribute(player, "title")
+        return self.CLONE_TEXT in self.browser.get_attribute(player, "title", log=False)
 
     def _get_player(self, nickname, players):
         self.frame._switch_to_frame()
         for p in players:
-            if self.browser.is_visible(p) and (self._get_player_name(p) == nickname):
+            if self._get_player_name(p) == nickname:
                 return p
 
         return None
 
     def __get_team_color(self, element):
         self.frame._switch_to_frame()
-        if not self.browser.is_visible(element):
-            #             print not self.browser.is_present(element), not self.browser.is_visible(element), element
-            return None
 
-        text = self.browser.get_attribute(element, "src")
-        #         print element, text
-        #         print "pbm1" in text , "pb1" in text
-        #         print "pbm0" in text , "pb0" in text
+        text = self.browser.get_attribute(element, "src", log=False)
         if "pbm1" in text or "pb1" in text:
             return Team.RED
         elif "pbm0" in text or "pb0" in text:
@@ -448,19 +437,14 @@ class FrameCreateClone(RootBrowser):
 
     def _get_player_name(self, element):
         self.frame._switch_to_frame()
-        if not self.browser.is_visible(element):
-            return None
-
         try:
-            title = self.browser.get_attribute(element, "title")
+            title = self.browser.get_attribute(element, "title", log=False)
         except StaleElementReferenceException:
             return None
 
-        index = title.find(" [")
-        if index == -1:
-            return None
-        else:
-            return title[3:index]
+        title = re.sub(ApehaRegExp.NICKNAME_HP_ENDING, '', title)
+        title = re.sub(ApehaRegExp.NICKNAME_RACE_START, '', title)
+        return title
 
     def _create_clone_around(self, player, my_team):
         self.frame._switch_to_frame()
