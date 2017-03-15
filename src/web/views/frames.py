@@ -641,6 +641,7 @@ class FrameAction(Frame):
             self.HOME_ARMS, self.HOME_BOOTS, self.HOME_RINGS,
             self.HOME_BRACES, self.HOME_RINGS
         ]
+        put_items = 0
 
         while True:
             try:
@@ -649,14 +650,16 @@ class FrameAction(Frame):
                     sleep(0.5)
                     ids_in_cat = self.__get_ids_in_current_cat()
                     for id_in_cat in ids_in_cat:
-                        if id_in_cat in ids:
-                            self.__put_on(id_in_cat)
+                        if id_in_cat in ids and self.__put_on(id_in_cat):
+                            put_items += 1
                 break
             except:
                 print_exception()
                 self.browser.refresh_page()
                 self.browser.switch_to_default_content()
                 self._switch_to_frame()
+
+        return put_items == len(ids)
 
     def _is_to_main_street(self):
         return self.browser.is_present(self.STREET) and self.browser.is_visible(self.STREET)
