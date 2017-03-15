@@ -5,6 +5,7 @@ import os
 import sys
 from threading import Thread
 
+
 root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", '..', '..'))
 if root not in os.sys.path:
     os.sys.path.append(root)
@@ -18,6 +19,8 @@ from wx._controls import StaticText, TextCtrl, StaticBox, CheckBox, TE_PASSWORD,
     ComboBox, TE_READONLY, TE_MULTILINE, Button, TE_DONTWRAP
 
 from src.web.utils.helper import safe_execute
+from src.web.utils.webutils import quit_browser
+
 
 from src.apeha.utils import unicode_str
 from src.apeha.bot.bot import ApehaBot
@@ -301,6 +304,7 @@ class ApehaBotUI(Frame):
                 pass
             self.btn_start.Enable()
             self.__enable_fields()
+            quit_browser()
 
         self.btn_stop_and_quit.Disable()
         wait_thread = Thread(target=wait_for_thread_ends)

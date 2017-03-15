@@ -56,11 +56,15 @@ class _FightingSettings(object):
 
     ASTRAL_LEVELS = [0, 1, 2, 3]
 
-    APP_NUMBER_OF_PLAYERS = 8
     MIN_ASTRAL_MANA_TO_USE = 10
 
     MY_BLOCKING_TICK_IDS = ["00", "01", "12", "14"]
     UNWANTED_PLAYERS = []
+
+    APP_NUMBER_OF_PLAYERS = 8
+    APP_MIN_TIMEOUT = 30
+    APP_MIN_LEVEL_DIFF = -1
+    APP_MIN_SIZE = 3
 
 
 class BotSettings(object):
@@ -71,15 +75,8 @@ class BotSettings(object):
         self.fighting_settings = _FightingSettings()
         self.timeouts = _Timeouts()
         self.clone_placement = ClonePlacement.TO_ALIASES_ME_FIRST
-        self.rating = 1020.2
-        self.item_ids = [29614430, 30953754, 50664801, 53547874,
-                         49643727, 66191327, 50079096, 7720059,
-                         56274248, 33872312, 54094213, 48363762,
-                         61720658, 28913708, 26968651, 12899862,
-                         23430181, 60529820, 38485632, 51044537,
-                         48735644, 48746647, 49810750, 54063846,
-                         60388735, 48724953, 52823274, 34543397,
-                         50727478, 44910294, 56527986, 49192644]
+        self.rating = 0.0
+        self.item_ids = []
         self.default_tactics = Tactics.DEFENSIVE
         self.default_astral_level = 3
 

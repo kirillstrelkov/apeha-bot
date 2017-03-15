@@ -3,7 +3,7 @@
 import re
 from pprint import pformat
 
-from src.apeha.bot.settings import SpellTexts
+from src.apeha.bot.settings import SpellTexts, _FightingSettings
 
 
 class Team(object):
@@ -107,15 +107,15 @@ def create_application(left_text, right_text):
 def get_best_application(apps, min_level, unwanted_player=None):
     if not unwanted_player:
         unwanted_player = []
-    apps2 = filter(lambda x: x.min_level >= min_level - 1 and x.timeout > 30 and x.max_size > 3, apps)
+    filtered_apps = [a for a in apps if (a.min_level >= min_level + _FightingSettings.APP_MIN_LEVEL_DIFF and
+                                         a.timeout > _FightingSettings.APP_MIN_TIMEOUT and
+                                         a.max_size > _FightingSettings.APP_MIN_SIZE)]
     apps = []
-    for app in apps2:
+    for app in filtered_apps:
         is_good_app = True
         for player in app.players:
-            char = "["
-            if player.find(char):
-                player = player[:player.index(char) - 1]
-            is_good_app = is_good_app and player not in unwanted_player
+            player_name = re.sub(r'\s+\[\d+\]$', '', player)
+            is_good_app = is_good_app and player_name not in unwanted_player
             if not is_good_app:
                 break
 
