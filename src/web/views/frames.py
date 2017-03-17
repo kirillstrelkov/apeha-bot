@@ -321,19 +321,23 @@ class FrameCreateClone(RootBrowser):
         return self.__get_players(team)
 
     def _get_sorted_players(self, name, players, clone_placement):
+        enemy_originals = players.enemy_originals
+        alias_originals = players.alias_originals
         if clone_placement == ClonePlacement.TO_EMENIES_TOP:
-            return players.enemy_originals
+            return enemy_originals
         elif clone_placement == ClonePlacement.TO_EMENIES_BOTTOM:
-            return players.enemy_originals[-1::-1]
+            return enemy_originals[-1::-1]
         elif clone_placement == ClonePlacement.TO_EMENIES_RANDOM:
-            return random.shuffle(players.enemy_originals)
+            random.shuffle(enemy_originals)
+            return enemy_originals
         elif clone_placement == ClonePlacement.TO_ALIASES_ME_FIRST:
             me_as_element = self.__get_css_selector_for_player_by_name(name)
-            return [me_as_element] + players.alias_originals
+            return [me_as_element] + alias_originals
         elif clone_placement == ClonePlacement.TO_ALIASES_RANDOM:
-            return random.shuffle(players.alias_originals)
+            random.shuffle(alias_originals)
+            return alias_originals
         else:
-            return players.alias_originals
+            return alias_originals
 
     def __get_players(self, team, players=None):
         if not players:
@@ -452,10 +456,12 @@ class FrameCreateClone(RootBrowser):
             sleep(0.2)
             self.browser.click(self.CREATE_CLONE)
             try:
+                self.browser._driver.switch_to_alert()
                 self.browser.alert_accept()
                 return False
             except WebDriverException:
-                return True
+                return False
+            return True
         else:
             return False
 

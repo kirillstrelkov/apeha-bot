@@ -318,8 +318,14 @@ class FightBot(object):
                         self.f_info.cast_fill_hp()
                         useless_rounds = 0
                 finally:
-                    if len(get_browser()._driver.window_handles) > 1:
-                        get_browser().close_current_window_and_focus_to_previous_one()
+                        browser = get_browser()
+                        driver = browser._driver
+                        if len(driver.window_handles) > 1:
+                            try:
+                                browser.close_current_window_and_focus_to_previous_one()
+                            except WebDriverException:
+                                driver.switch_to_alert()
+                                browser.alert_accept()
 
             else:
                 useless_rounds += 1
