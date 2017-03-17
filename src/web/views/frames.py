@@ -47,7 +47,7 @@ class ApehaMain(RootBrowser):
         quote = '"'
         start = attr.index(quote) + 1
         url = attr[start:attr.index(quote, start)]
-        print url
+        # print url
         self.browser.get(url)
 
 
@@ -787,7 +787,7 @@ class FrameAction(Frame):
         while True:
             btns = get_btns()
             before = len(btns)
-            print before
+            # print before
             if before > 0:
                 btn = btns[0]
                 if self.browser.is_visible(btn):
