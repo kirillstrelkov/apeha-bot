@@ -65,6 +65,7 @@ class _FightingSettings(object):
     APP_MIN_TIMEOUT = 30
     APP_MIN_LEVEL_DIFF = -1
     APP_MIN_SIZE = 3
+    APP_MAP_STANDARD = u'станд'
 
 
 class BotSettings(object):

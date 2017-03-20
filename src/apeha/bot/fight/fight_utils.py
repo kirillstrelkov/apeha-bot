@@ -109,8 +109,10 @@ def get_best_application(apps, min_level, unwanted_player=None):
     if not unwanted_player:
         unwanted_player = []
     filtered_apps = [a for a in apps if (a.min_level >= min_level + _FightingSettings.APP_MIN_LEVEL_DIFF and
-                                         a.timeout > _FightingSettings.APP_MIN_TIMEOUT and
-                                         a.max_size > _FightingSettings.APP_MIN_SIZE)]
+                                         a.timeout >= _FightingSettings.APP_MIN_TIMEOUT and
+                                         a.max_size >= _FightingSettings.APP_MIN_SIZE and
+                                         not a.obstacle and
+                                         a.map.count(_FightingSettings.APP_MAP_STANDARD) == 2)]
     apps = []
     for app in filtered_apps:
         is_good_app = True

@@ -80,7 +80,7 @@ class FramePersInfo(Frame):
 
     MAG_BOOK = (By.CSS_SELECTOR, "[target='MagBook']")
     ABILITY = (By.CSS_SELECTOR, "[target='Ability']")
-    __CLAN_LINK = (By.CSS_SELECTOR, "nobr a")
+    __CLAN_LINK = (By.CSS_SELECTOR, "nobr a:not(.info)")
     __ASTRAL_LINE = (By.XPATH, u"//b[../../td/img[@src=\"img/astral.gif\"]]")
     TACTICS_TYPE = (By.CSS_SELECTOR, "select[name='tactic']")
     TACTICS_APPLY = (By.CSS_SELECTOR, u"input[value='Установить']")
@@ -537,7 +537,7 @@ class FrameAction(Frame):
     CASTLE_BY_CLAN = (By.CSS_SELECTOR, u"input[value='К замку \"%s\"']")
     CASTLE_ALLEY = (By.CSS_SELECTOR, u"input[value='К замкам кланов']")
     TWO_CASTLES = (By.CSS_SELECTOR, u"table.contr table")
-    CASTLE_ROOMS = (By.CSS_SELECTOR, u"table td")
+    CASTLE_ROOMS = (By.CSS_SELECTOR, u"table.ax td")
     STAND_UP = (By.CSS_SELECTOR, u"input[value='Встать']")
     SIT_DOWN = (By.CSS_SELECTOR, u"input[value='Присесть']")
 
@@ -698,8 +698,10 @@ class FrameAction(Frame):
                     sleep(0.5)
                     rooms = self.browser.find_elements(self.CASTLE_ROOMS)
                     for room in rooms:
+                        room_name = u"Тронный зал"
                         if (self.browser.is_visible(room) and
-                                    u"Тронный зал" == self.browser.get_text(room)):
+                            (self.browser.is_visible((By.CSS_SELECTOR, u"img[alt='{}']".format(room_name))) or
+                             room_name == self.browser.get_text(room))):
                             self.browser.click(room.find_element(By.TAG_NAME, u"input"))
                             break
 
