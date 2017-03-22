@@ -105,20 +105,20 @@ def create_application(left_text, right_text):
                        _type, _map, obstacle, int(_min) * 60 + int(sec))
 
 
-def get_best_application(apps, min_level, unwanted_player=None):
-    if not unwanted_player:
-        unwanted_player = []
-    filtered_apps = [a for a in apps if (a.min_level >= min_level + _FightingSettings.APP_MIN_LEVEL_DIFF and
-                                         a.timeout >= _FightingSettings.APP_MIN_TIMEOUT and
-                                         a.max_size >= _FightingSettings.APP_MIN_SIZE and
+def get_best_application(apps, min_level, fighting_settings=None):
+    if not fighting_settings:
+        fighting_settings = _FightingSettings()
+    filtered_apps = [a for a in apps if (a.min_level >= min_level + fighting_settings.APP_MIN_LEVEL_DIFF and
+                                         a.timeout >= fighting_settings.APP_MIN_TIMEOUT and
+                                         a.max_size >= fighting_settings.APP_MIN_SIZE and
                                          not a.obstacle and
-                                         a.map.count(_FightingSettings.APP_MAP_STANDARD) == 2)]
+                                         a.map.count(fighting_settings.APP_MAP_STANDARD) == 2)]
     apps = []
     for app in filtered_apps:
         is_good_app = True
         for player in app.players:
             player_name = re.sub(ApehaRegExp.NICKNAME_HP_ENDING, '', player)
-            is_good_app = is_good_app and player_name not in unwanted_player
+            is_good_app = is_good_app and player_name not in fighting_settings.UNWANTED_PLAYERS
             if not is_good_app:
                 break
 

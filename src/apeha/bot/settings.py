@@ -3,6 +3,11 @@ import codecs
 import os
 import pickle
 
+import jsonpickle
+
+jsonpickle.set_preferred_backend('json')
+jsonpickle.set_encoder_options('json', indent=4)
+
 INJURIES_AND_ROLLS = {
     u"Легкая травма": u"Лечение легкой травмы",
     u"Средняя травма": u"Лечение средней травмы",
@@ -38,34 +43,36 @@ class SpellTexts(object):
 
 
 class _Timeouts(object):
-    APP_TIMEOUT = 1 * 60
-    FIGHT_TIMEOUT = 1.0 * 60
-    APPLICATION_WAIT_TIMEOUT = 10 * 60
-    PERS_READY_TIMEOUT = 1 * 60
-    ASTRAL_REFRESH_TIMEOUT = 3 * 60
-    WAIT_FOR_FIGHT_REFRESH_TIMEOUT = 3
-    MAX_TIMEOUT_PER_WAIT_FOR_VISIBLE = 2 * 60
+    def __init__(self):
+        self.APP_TIMEOUT = 1 * 60
+        self.FIGHT_TIMEOUT = 1.0 * 60
+        self.APPLICATION_WAIT_TIMEOUT = 10 * 60
+        self.PERS_READY_TIMEOUT = 1 * 60
+        self.ASTRAL_REFRESH_TIMEOUT = 3 * 60
+        self.WAIT_FOR_FIGHT_REFRESH_TIMEOUT = 3
+        self.MAX_TIMEOUT_PER_WAIT_FOR_VISIBLE = 2 * 60
 
 
 class _FightingSettings(object):
-    MANA_FOR_CLONE = 75
-    MANA_FOR_HP = 50
-    MIN_HP_RATIO = 0.75
+    def __init__(self):
+        self.MANA_FOR_CLONE = 75
+        self.MANA_FOR_HP = 50
+        self.MIN_HP_RATIO = 0.75
 
-    ROUNDS_TO_FREEZE = 20
+        self.ROUNDS_TO_FREEZE = 20
 
-    ASTRAL_LEVELS = [0, 1, 2, 3]
+        self.ASTRAL_LEVELS = [0, 1, 2, 3]
 
-    MIN_ASTRAL_MANA_TO_USE = 10
+        self.MIN_ASTRAL_MANA_TO_USE = 10
 
-    MY_BLOCKING_TICK_IDS = ["00", "01", "12", "14"]
-    UNWANTED_PLAYERS = []
+        # self.MY_BLOCKING_TICK_IDS = ["00", "01", "12", "14"]
+        self.UNWANTED_PLAYERS = []
 
-    APP_NUMBER_OF_PLAYERS = 8
-    APP_MIN_TIMEOUT = 30
-    APP_MIN_LEVEL_DIFF = -1
-    APP_MIN_SIZE = 3
-    APP_MAP_STANDARD = u'станд'
+        self.APP_NUMBER_OF_PLAYERS = 8
+        self.APP_MIN_TIMEOUT = 30
+        self.APP_MIN_LEVEL_DIFF = -1
+        self.APP_MIN_SIZE = 3
+        self.APP_MAP_STANDARD = u'станд'
 
 
 class BotSettings(object):
@@ -94,7 +101,7 @@ def get_settings(path=None):
     if os.path.exists(path):
         with codecs.open(path, __MODE_RB, __ENCODING) as ofile:
             content = ofile.read()
-            return pickle.loads(content)
+            return jsonpickle.decode(content)
     else:
         return BotSettings()
 
@@ -104,5 +111,5 @@ def save_settings(settings, path=None):
         path = BotSettings.FILEPATH
 
     with codecs.open(path, __MODE_WB, __ENCODING) as ofile:
-        ofile.write(pickle.dumps(settings))
+        ofile.write(jsonpickle.encode(settings))
         ofile.flush()

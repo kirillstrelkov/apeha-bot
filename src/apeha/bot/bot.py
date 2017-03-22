@@ -66,7 +66,7 @@ class ApehaBot(object):
         apps = frame._get_applications()
         app = get_best_application(apps,
                                    level,
-                                   self.default_settings.fighting_settings.UNWANTED_PLAYERS)
+                                   self.default_settings.fighting_settings)
 
         if app:
             frame._enter_application(app)
