@@ -324,12 +324,12 @@ class FrameCreateClone(RootBrowser):
         enemy_originals = players.enemy_originals
         alias_originals = players.alias_originals
         if clone_placement == ClonePlacement.TO_EMENIES_TOP:
-            return enemy_originals
+            return enemy_originals + players.enemy_team
         elif clone_placement == ClonePlacement.TO_EMENIES_BOTTOM:
-            return enemy_originals[-1::-1]
+            return enemy_originals[-1::-1] + players.enemy_team
         elif clone_placement == ClonePlacement.TO_EMENIES_RANDOM:
             random.shuffle(enemy_originals)
-            return enemy_originals
+            return enemy_originals + players.enemy_team
         elif clone_placement == ClonePlacement.TO_ALIASES_ME_FIRST:
             me_as_element = self.__get_css_selector_for_player_by_name(name)
             return [me_as_element] + alias_originals
