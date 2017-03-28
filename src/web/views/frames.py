@@ -847,18 +847,19 @@ class FrameFight(FrameAction):
     def wait_for_round_ended(self):
         print u"Жду конца раунда"
         time1 = time.time()
-        hp_cur = self.f_pers.get_hp_cur_and_max()[0]
         self._switch_to_frame()
         time_spent = time.time() - time1
-        while (not self.browser.is_visible(self.ATTACK_OR_BLOCK) and
-                       hp_cur > 0 and
-                       time_spent <= self.settings.timeouts.FIGHT_TIMEOUT):
+        timeouts = self.settings.timeouts
+        while not self.browser.is_visible(self.ATTACK_OR_BLOCK) and \
+              time_spent <= timeouts.APP_TIMEOUT and \
+              self.is_fighting():
             time.sleep(1)
-            if int(time_spent) % (1 * 30) <= 2 and self.browser.is_visible(self.REFRESH):
+            time_spent = time.time() - time1
+
+            if int(time_spent) % timeouts.FIGHT_REFRESH_TIMEOUT <= 3 and \
+                    self.browser.is_visible(self.REFRESH):
                 self._click_refresh()
 
-            hp_cur = self.f_pers.get_hp_cur_and_max()[0]
-            time_spent = time.time() - time1
             self._switch_to_frame()
 
         print u"Новый раунд"
@@ -884,7 +885,7 @@ class FrameFight(FrameAction):
         print u"Жду конца боя"
 
         while (self.is_fighting()):
-            time.sleep(self.settings.timeouts.FIGHT_TIMEOUT)
+            time.sleep(self.settings.timeouts.APP_TIMEOUT)
             if self.browser.is_visible(self.REFRESH):
                 self.browser.click(self.REFRESH)
 

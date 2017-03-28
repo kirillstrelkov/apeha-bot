@@ -264,21 +264,25 @@ class FightBot(object):
         noa = len(players.my_team)
         return noe == num_of_enemies or noa == num_of_aliases
 
-    def __use_mana(self, players):
+    def __use_mana(self, players, cur_round=-1):
         self.to_stop()
         cur_num_of_enemies = len(players.enemy_team)
         cur_num_of_aliases = len(players.my_team)
         enemies_are_cloning = cur_num_of_enemies > len(players.enemy_originals)
-        aliases_are_cloning = cur_num_of_aliases >= len(players.alias_originals)
+        aliases_are_cloning = cur_num_of_aliases > len(players.alias_originals)
         have_alias = cur_num_of_aliases > 1
-        return have_alias and (enemies_are_cloning and aliases_are_cloning or
-                               aliases_are_cloning and cur_num_of_aliases / float(cur_num_of_enemies) < 2.0)
+        return cur_round == 1 or \
+               have_alias and (enemies_are_cloning and
+                               aliases_are_cloning or
+                               aliases_are_cloning and
+                               cur_num_of_aliases / float(cur_num_of_enemies) < 2.0)
 
     def fight(self, name, astral_level, block_ids):
         self.to_stop()
         in_astral = False
         cur_astral_level = 0
         useless_rounds = 0
+        cur_round = 1
 
         fcc = FrameCreateClone(self.f_fight, self.default_settings)
         team_color = None
@@ -303,7 +307,7 @@ class FightBot(object):
             if not team_color:
                 team_color = players.team_color
 
-            if self.__use_mana(players):
+            if self.__use_mana(players, cur_round):
                 try:
                     if (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_CLONE and
                                 hp_rate >= self.default_settings.fighting_settings.MIN_HP_RATIO):
@@ -336,6 +340,7 @@ class FightBot(object):
 
             self.to_stop()
             self.f_fight.wait_for_round_ended()
+            cur_round += 1
 
         while self.f_fight.is_fighting() and in_astral:
             self.to_stop()

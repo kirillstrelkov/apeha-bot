@@ -45,7 +45,7 @@ class SpellTexts(object):
 class _Timeouts(object):
     def __init__(self):
         self.APP_TIMEOUT = 1 * 60
-        self.FIGHT_TIMEOUT = 1.0 * 60
+        self.FIGHT_REFRESH_TIMEOUT = 1.0 * 13
         self.APPLICATION_WAIT_TIMEOUT = 10 * 60
         self.PERS_READY_TIMEOUT = 1 * 60
         self.ASTRAL_REFRESH_TIMEOUT = 3 * 60
