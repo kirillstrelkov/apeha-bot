@@ -76,7 +76,7 @@ class _FightingSettings(object):
 
 
 class BotSettings(object):
-    FILEPATH = os.path.join(os.path.expanduser("~"), '.settings_apehapy')
+    FILEPATH = os.path.join(os.path.expanduser("~"), '.settings_apehapy.json')
 
     # main settings which should be used everywhere
     def __init__(self):
