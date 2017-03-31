@@ -884,7 +884,7 @@ class FrameFight(FrameAction):
         self._switch_to_frame()
         print u"Жду конца боя"
 
-        while (self.is_fighting()):
+        while self.is_fighting():
             time.sleep(self.settings.timeouts.APP_TIMEOUT)
             if self.browser.is_visible(self.REFRESH):
                 self.browser.click(self.REFRESH)

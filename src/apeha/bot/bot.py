@@ -140,8 +140,17 @@ class ApehaBot(object):
         except WebDriverException:
             traceback.print_exc()
         finally:
+            self.__exit_astral(f_fight, fight_bot)
             f_fight.wait_for_fight_ended()
         f_fight.end_fight()
+
+    def __exit_astral(self, f_fight, fight_bot):
+        print(u'Выхожу из астрала')
+        in_astral = True
+        while f_fight.is_fighting() and in_astral:
+            self.to_stop()
+            in_astral = fight_bot.__select_previous_astral_and_is_in_astral()
+            time.sleep(self.default_settings.timeouts.ASTRAL_REFRESH_TIMEOUT)
 
     def __select_tactics_if_needed(self):
         self.to_stop()
@@ -341,10 +350,5 @@ class FightBot(object):
             self.to_stop()
             self.f_fight.wait_for_round_ended()
             cur_round += 1
-
-        while self.f_fight.is_fighting() and in_astral:
-            self.to_stop()
-            in_astral = self.__select_previous_astral_and_is_in_astral()
-            time.sleep(self.default_settings.timeouts.ASTRAL_REFRESH_TIMEOUT)
 
         self.to_stop()
