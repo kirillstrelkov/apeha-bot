@@ -4,13 +4,13 @@ TIMEOUT = 7
 __BROWSER = None
 
 
-def get_browser():
+def get_browser(name='gc'):
     global __BROWSER
 
     if not __BROWSER:
         try:
             # NOTE: LOGGER increases exec time
-            __BROWSER = Browser('gc')
+            __BROWSER = Browser(name)
         except Exception as e:
             print(e)
             __BROWSER = Browser()

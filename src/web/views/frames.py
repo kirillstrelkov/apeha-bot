@@ -258,13 +258,17 @@ class FrameCreateClone(RootBrowser):
     CREATE_CLONE = (By.CSS_SELECTOR, u"input[onclick*='MakeCast']")
     MAP = (By.ID, "mapspan")
     IMG_PLAYER = (By.CSS_SELECTOR, "#mapspan img")
+    MAP_MARKER = (By.ID, 'mrkr')
 
     XPATH_IMG_BY_NICK = u"//img[contains(@title, '%s [')]"
     CSS_IMG_BY_NICK = u"img[title*='%s [']"
+    CSS_IMG_BY_STYLE = u"#mapspan img[style*='%s'][style*='%s']"
 
     NICK = (By.ID, "VAL_nick")
     NICKNAMES = (By.ID, "aliveshow")
     CLONE_TEXT = u"клон"
+
+    REGEXP_IMG_TOP_LEFT_ALIGN = re.compile('top:.(\d+)px.*left:.(\d+)px')
 
     def __init__(self, frame, settings):
         RootBrowser.__init__(self, settings)
@@ -429,15 +433,32 @@ class FrameCreateClone(RootBrowser):
 
         self.browser.mouse.left_click_by_offset(player, 0, 0)
         for nx, ny in nset:
-            if not self.browser.is_visible(self.NICK):
-                self.browser.click(FramePersInfo.BTN_PERS)
-            before = self.browser.get_text(self.NICK)
             self.browser.mouse.left_click_by_offset(player, nx, ny)
-            after = self.browser.get_text(self.NICK)
-            if before == after:
+            # cur_selected_nick = self.__get_selected_nick()  # NOTE: for debug only
+            if self.__is_selected_spot_open():
                 return True
 
         return False
+
+    def __get_selected_nick(self):
+        top, left = [int(m) for m in self.REGEXP_IMG_TOP_LEFT_ALIGN.findall(
+            self.browser.get_attribute(self.MAP_MARKER, 'style')
+        )[0]]
+        if self.__is_selected_spot_open():
+            return None
+        else:
+            return self.browser.get_attribute(
+                (By.CSS_SELECTOR, self.CSS_IMG_BY_STYLE % (top + 1, left)),
+                'title'
+            )
+
+    def __is_selected_spot_open(self):
+        top, left = [int(m) for m in self.REGEXP_IMG_TOP_LEFT_ALIGN.findall(
+            self.browser.get_attribute(self.MAP_MARKER, 'style')
+        )[0]]
+        return not self.browser.is_present(
+            (By.CSS_SELECTOR, self.CSS_IMG_BY_STYLE % (top + 1, left)),
+        )
 
     def _get_player_name(self, element):
         self.frame._switch_to_frame()
