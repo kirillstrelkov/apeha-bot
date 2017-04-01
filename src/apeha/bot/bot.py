@@ -140,17 +140,8 @@ class ApehaBot(object):
         except WebDriverException:
             traceback.print_exc()
         finally:
-            self.__exit_astral(f_fight, fight_bot)
             f_fight.wait_for_fight_ended()
         f_fight.end_fight()
-
-    def __exit_astral(self, f_fight, fight_bot):
-        print(u'Выхожу из астрала')
-        in_astral = True
-        while f_fight.is_fighting() and in_astral:
-            self.to_stop()
-            in_astral = fight_bot.__select_previous_astral_and_is_in_astral()
-            time.sleep(self.default_settings.timeouts.ASTRAL_REFRESH_TIMEOUT)
 
     def __select_tactics_if_needed(self):
         self.to_stop()
@@ -297,58 +288,65 @@ class FightBot(object):
         team_color = None
 
         hp_cur = self.f_info.get_hp_cur_and_max()[0]
-        while hp_cur > 0:
-            self.to_stop()
+        try:
+            while hp_cur > 0:
+                self.to_stop()
 
-            mana_cur = self.f_info.get_mana_cur_and_max()[0]
-            hp_cur, hp_max = self.f_info.get_hp_cur_and_max()
-            hp_rate = float(hp_cur) / hp_max
+                mana_cur = self.f_info.get_mana_cur_and_max()[0]
+                hp_cur, hp_max = self.f_info.get_hp_cur_and_max()
+                hp_rate = float(hp_cur) / hp_max
 
-            if hp_cur == 0 or not self.f_fight.is_attack_or_block_visible():
-                break
-
-            players = self._get_players(fcc, nickname=name, team=team_color)
-            if not players:
-                break
-            if len(players.enemy_originals) == 1 and len(players.alias_originals) == 1:
-                break
-
-            if not team_color:
-                team_color = players.team_color
-
-            if self.__use_mana(players, cur_round):
-                try:
-                    if (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_CLONE and
-                                hp_rate >= self.default_settings.fighting_settings.MIN_HP_RATIO):
-                        cur_astral_level = self.__select_next_astral_and_is_in_astral(cur_astral_level, astral_level)
-                        in_astral = cur_astral_level > 0
-
-                        self.f_info.cast_create_clone()
-                        fcc.create_clone(name, players, self.default_settings.clone_placement)
-                        useless_rounds = 0
-                    elif (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_HP and
-                                  hp_rate < self.default_settings.fighting_settings.MIN_HP_RATIO):
-                        self.f_info.cast_fill_hp()
-                        useless_rounds = 0
-                finally:
-                        browser = get_browser()
-                        driver = browser._driver
-                        if len(driver.window_handles) > 1:
-                            try:
-                                browser.close_current_window_and_focus_to_previous_one()
-                            except WebDriverException:
-                                driver.switch_to_alert()
-                                browser.alert_accept()
-
-            else:
-                useless_rounds += 1
-                if useless_rounds == self.default_settings.fighting_settings.ROUNDS_TO_FREEZE:
+                if hp_cur == 0 or not self.f_fight.is_attack_or_block_visible():
                     break
 
-            self.f_fight.block_myself(block_ids)
+                players = self._get_players(fcc, nickname=name, team=team_color)
+                if not players:
+                    break
+                if len(players.enemy_originals) == 1 and len(players.alias_originals) == 1:
+                    break
 
-            self.to_stop()
-            self.f_fight.wait_for_round_ended()
-            cur_round += 1
+                if not team_color:
+                    team_color = players.team_color
+
+                if self.__use_mana(players, cur_round):
+                    try:
+                        if (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_CLONE and
+                                    hp_rate >= self.default_settings.fighting_settings.MIN_HP_RATIO):
+                            cur_astral_level = self.__select_next_astral_and_is_in_astral(cur_astral_level, astral_level)
+                            in_astral = cur_astral_level > 0
+
+                            self.f_info.cast_create_clone()
+                            fcc.create_clone(name, players, self.default_settings.clone_placement)
+                            useless_rounds = 0
+                        elif (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_HP and
+                                      hp_rate < self.default_settings.fighting_settings.MIN_HP_RATIO):
+                            self.f_info.cast_fill_hp()
+                            useless_rounds = 0
+                    finally:
+                            browser = get_browser()
+                            driver = browser._driver
+                            if len(driver.window_handles) > 1:
+                                try:
+                                    browser.close_current_window_and_focus_to_previous_one()
+                                except WebDriverException:
+                                    driver.switch_to_alert()
+                                    browser.alert_accept()
+
+                else:
+                    useless_rounds += 1
+                    if useless_rounds == self.default_settings.fighting_settings.ROUNDS_TO_FREEZE:
+                        break
+
+                self.f_fight.block_myself(block_ids)
+
+                self.to_stop()
+                self.f_fight.wait_for_round_ended()
+                cur_round += 1
+        finally:
+            print(u'Выхожу из астрала')
+            while self.f_fight.is_fighting() and in_astral:
+                self.to_stop()
+                in_astral = self.__select_previous_astral_and_is_in_astral()
+                time.sleep(self.default_settings.timeouts.ASTRAL_REFRESH_TIMEOUT)
 
         self.to_stop()
