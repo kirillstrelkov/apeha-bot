@@ -277,7 +277,7 @@ class FrameCreateClone(RootBrowser):
     def _get_players_with_clones(self):
         self.frame._switch_to_frame()
         self.frame._click_refresh()
-        text = self.browser.get_text(self.NICKNAMES, log=False)
+        text = self.browser.get_text(self.NICKNAMES)
         nicknames = get_nicknames(text)
         w_and_s = {}
 
@@ -401,7 +401,7 @@ class FrameCreateClone(RootBrowser):
         return player_team == my_team
 
     def __is_clone(self, player):
-        return self.CLONE_TEXT in self.browser.get_attribute(player, "title", log=False)
+        return self.CLONE_TEXT in self.browser.get_attribute(player, "title")
 
     def _get_player(self, nickname, players):
         self.frame._switch_to_frame()
@@ -414,7 +414,7 @@ class FrameCreateClone(RootBrowser):
     def __get_team_color(self, element):
         self.frame._switch_to_frame()
 
-        text = self.browser.get_attribute(element, "src", log=False)
+        text = self.browser.get_attribute(element, "src")
         if "pbm1" in text or "pb1" in text:
             return Team.RED
         elif "pbm0" in text or "pb0" in text:
@@ -422,14 +422,13 @@ class FrameCreateClone(RootBrowser):
         else:
             return None
 
-    def _select_open_spot(self, player, my_team):
+    def _select_open_spot(self, player, my_team, radius):
         self.frame._switch_to_frame()
-        pn = PlayerNeighbours()
 
         if Team.RED == my_team:
-            nset = pn.CLOCKWISE_SET
+            nset = PlayerNeighbours.get_set(PlayerNeighbours.CLOCKWISE, radius)
         else:
-            nset = pn.ANTICLOCKWISE_SET
+            nset = PlayerNeighbours.get_set(PlayerNeighbours.ANTI_CLOCKWISE, radius)
 
         self.browser.mouse.left_click_by_offset(player, 0, 0)
         for nx, ny in nset:
@@ -463,7 +462,7 @@ class FrameCreateClone(RootBrowser):
     def _get_player_name(self, element):
         self.frame._switch_to_frame()
         try:
-            title = self.browser.get_attribute(element, "title", log=False)
+            title = self.browser.get_attribute(element, "title")
         except StaleElementReferenceException:
             return None
 
@@ -471,9 +470,9 @@ class FrameCreateClone(RootBrowser):
         title = re.sub(ApehaRegExp.NICKNAME_RACE_START, '', title)
         return title
 
-    def _create_clone_around(self, player, my_team):
+    def _create_clone_around(self, player, my_team, radius=PlayerNeighbours.RADIUS):
         self.frame._switch_to_frame()
-        if self._select_open_spot(player, my_team):
+        if self._select_open_spot(player, my_team, radius):
             sleep(0.2)
             self.browser.click(self.CREATE_CLONE)
             try:
@@ -490,9 +489,11 @@ class FrameCreateClone(RootBrowser):
         self.frame._switch_to_frame()
         team_color = players.team_color
         players_selectors = self._get_sorted_players(name, players, clone_placement)
-        for player in players_selectors:
-            if self.browser.is_visible(player) and self._create_clone_around(player, team_color):
-                return True
+
+        for radius in (PlayerNeighbours.RADIUS, PlayerNeighbours.RADIUS_DOUBLE):
+            for player in players_selectors:
+                if self.browser.is_visible(player) and self._create_clone_around(player, team_color, radius):
+                    return True
 
         return False
 

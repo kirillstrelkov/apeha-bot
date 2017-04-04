@@ -266,16 +266,17 @@ class FightBot(object):
 
     def __use_mana(self, players, cur_round=-1):
         self.to_stop()
-        cur_num_of_enemies = len(players.enemy_team)
-        cur_num_of_aliases = len(players.my_team)
-        enemies_are_cloning = cur_num_of_enemies > len(players.enemy_originals)
-        aliases_are_cloning = cur_num_of_aliases > len(players.alias_originals)
-        have_alias = cur_num_of_aliases > 1
-        return cur_round == 1 or \
-               have_alias and (enemies_are_cloning and
-                               aliases_are_cloning or
-                               aliases_are_cloning and
-                               cur_num_of_aliases / float(cur_num_of_enemies) < 2.0)
+        nr_of_enemies = len(players.enemy_team)
+        nr_of_aliases = len(players.my_team)
+
+        nr_of_aliases_originals = len(players.alias_originals)
+        nr_of_enemy_originals = len(players.enemy_originals)
+
+        have_aliases = nr_of_aliases_originals > 1
+        first_round = cur_round == 1
+        return (first_round or
+                (have_aliases and (nr_of_aliases < 3.0 * nr_of_enemies)) or
+                (not have_aliases and nr_of_enemy_originals == 0))
 
     def fight(self, name, astral_level, block_ids):
         self.to_stop()

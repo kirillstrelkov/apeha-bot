@@ -3,6 +3,8 @@
 import re
 from pprint import pformat
 
+from math import cos, sin, radians
+
 from src.apeha.bot.settings import SpellTexts, _FightingSettings
 from src.apeha.utils import ApehaRegExp
 
@@ -27,26 +29,47 @@ class Players(object):
 
 class PlayerNeighbours(object):
     """
-        Hold information about current coordinates and 6 other neighbours.
+        Holds information about current coordinates and 6 other neighbours.
             F             A
         E       (0,0)       B
             D            C
     """
-    RADIUS = 20
+    TOTAL = 360
+    RADIUS = 30
+    RADIUS_DOUBLE = RADIUS * 2
 
-    def __init__(self):
-        x, y = 0, 0
-        big_radius = int(1.5 * self.RADIUS)
-        self.A = (x + self.RADIUS, y - big_radius)
-        self.B = (x + 2 * self.RADIUS, y)
-        self.C = (x + self.RADIUS, y + big_radius)
-        self.D = (x - self.RADIUS, y + big_radius)
-        self.E = (x - 2 * self.RADIUS, y)
-        self.F = (x - self.RADIUS, y - big_radius)
-        self.RIGHT_SET = (self.A, self.B, self.C)
-        self.LEFT_SET = (self.F, self.E, self.D)
-        self.CLOCKWISE_SET = self.RIGHT_SET + self.LEFT_SET[-1::-1]
-        self.ANTICLOCKWISE_SET = self.LEFT_SET + self.RIGHT_SET[-1::-1]
+    CLOCKWISE = 'clockwise'
+    ANTI_CLOCKWISE = 'counter_clockwise'
+
+    CLOCKWISE_SET = [(cos(radians(angle)) * RADIUS,
+                      sin(radians(angle)) * RADIUS) for angle in range(-60, 300, 60)]
+    ANTICLOCKWISE_SET = [(cos(radians(angle)) * RADIUS,
+                          sin(radians(angle)) * RADIUS) for angle in range(240, -120, -60)]
+
+    CLOCKWISE_SET2 = [(cos(radians(angle)) * RADIUS_DOUBLE,
+                      sin(radians(angle)) * RADIUS_DOUBLE) for angle in range(-60, 300, 30)]
+    ANTICLOCKWISE_SET2 = [(cos(radians(angle)) * RADIUS_DOUBLE,
+                          sin(radians(angle)) * RADIUS_DOUBLE) for angle in range(240, -120, -30)]
+
+    @classmethod
+    def get_set(cls, wise, radius=RADIUS):
+        if radius == cls.RADIUS:
+            if wise == cls.ANTI_CLOCKWISE:
+                return cls.ANTICLOCKWISE_SET
+            elif wise == cls.CLOCKWISE:
+                return cls.CLOCKWISE_SET
+            else:
+                raise NotImplementedError
+        elif radius == cls.RADIUS_DOUBLE:
+            if wise == cls.ANTI_CLOCKWISE:
+                return cls.ANTICLOCKWISE_SET2
+            elif wise == cls.CLOCKWISE:
+                return cls.CLOCKWISE_SET2
+            else:
+                raise NotImplementedError
+        else:
+            raise NotImplementedError
+
 
 
 class Application(object):
