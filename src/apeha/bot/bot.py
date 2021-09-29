@@ -10,8 +10,13 @@ from src.apeha.bot.fight.fight_utils import get_best_application
 from src.apeha.bot.settings import BotSettings, save_settings
 from src.apeha.utils import print_exception
 from src.web.utils.webutils import get_browser
-from src.web.views.frames import FramePersInfo, ApehaMain, FrameAction, \
-    FrameFight, FrameCreateClone
+from src.web.views.frames import (
+    FramePersInfo,
+    ApehaMain,
+    FrameAction,
+    FrameFight,
+    FrameCreateClone,
+)
 
 
 class StopException(Exception):
@@ -41,7 +46,7 @@ class ApehaBot(object):
             frame._click_castle_alley()
             frame._go_to_castle_from_alley(clan)
         except WebDriverException:
-            print u"Не смог добежать до замка"
+            print("Не смог добежать до замка")
 
     def _go_back_to_castle_and_wait_for_hp_mana(self, f_action, f_info, clan):
         self.to_stop()
@@ -50,7 +55,10 @@ class ApehaBot(object):
         if mana_cur == mana_max and hp_cur == hp_max:
             return
         else:
-            if mana_cur > self.default_settings.fighting_settings.MANA_FOR_HP and hp_cur != hp_max:
+            if (
+                mana_cur > self.default_settings.fighting_settings.MANA_FOR_HP
+                and hp_cur != hp_max
+            ):
                 f_info.cast_fill_hp()
                 if len(get_browser()._driver.window_handles) > 1:
                     get_browser().close_current_window_and_focus_to_previous_one()
@@ -64,9 +72,7 @@ class ApehaBot(object):
         self.to_stop()
         frame._click_chaos_fight()
         apps = frame._get_applications()
-        app = get_best_application(apps,
-                                   level,
-                                   self.default_settings.fighting_settings)
+        app = get_best_application(apps, level, self.default_settings.fighting_settings)
 
         if app:
             frame._enter_application(app)
@@ -104,8 +110,8 @@ class ApehaBot(object):
             if rating != f_info.get_rating() and len(item_ids) > 0:
                 cash = f_info.get_cash()
                 if cash and len(cash) == 2 and cash[-1] > 0:
-                    print u"Найденно %f синих соткок на руках" % cash[-1]
-                    print u"!!!Починку предметов пропускаю!!!"
+                    print("Найденно %f синих соткок на руках" % cash[-1])
+                    print("!!!Починку предметов пропускаю!!!")
                 else:
                     f_action.repair_items()
                 f_action.put_on_items_by_ids(item_ids)
@@ -116,9 +122,9 @@ class ApehaBot(object):
         self.to_stop()
         is_full = f_info.is_ready_to_fight()
         if not is_full:
-            print u"Жду восстановления жизней и маны"
+            print("Жду восстановления жизней и маны")
 
-        while (not is_full):
+        while not is_full:
             time.sleep(self.default_settings.timeouts.PERS_READY_TIMEOUT)
             is_full = f_info.is_ready_to_fight()
 
@@ -129,12 +135,22 @@ class ApehaBot(object):
             main.login(username, password)
         except Exception:
             traceback.print_exc()
-            raise Exception(u"Не могу залогиниться")
+            raise Exception("Не могу залогиниться")
 
-    def _start_and_end_fight(self, f_action, f_info, f_fight, fight_bot, name, item_ids, rating, astral_level,
-                             block_ids):
+    def _start_and_end_fight(
+        self,
+        f_action,
+        f_info,
+        f_fight,
+        fight_bot,
+        name,
+        item_ids,
+        rating,
+        astral_level,
+        block_ids,
+    ):
         self.to_stop()
-        print u"Бой начался"
+        print("Бой начался")
         try:
             fight_bot.fight(name, astral_level, block_ids)
         except WebDriverException:
@@ -154,7 +170,9 @@ class ApehaBot(object):
             f_action = FrameAction(self.default_settings)
             f_fight = FrameFight(self.default_settings)
             f_info = FramePersInfo(self.default_settings)
-            fight_bot = FightBot(f_fight, f_info, self.default_settings, self.stop_event)
+            fight_bot = FightBot(
+                f_fight, f_info, self.default_settings, self.stop_event
+            )
 
             self._login(username, password)
             rating = f_info.get_rating()
@@ -181,7 +199,9 @@ class ApehaBot(object):
                     info = f_info.get_player_info()
 
                     self._cure_injury_if_injured(f_info, f_action)
-                    self._go_back_to_castle_and_wait_for_hp_mana(f_action, f_info, info.clan)
+                    self._go_back_to_castle_and_wait_for_hp_mana(
+                        f_action, f_info, info.clan
+                    )
 
                     # Gets personal info
                     info = f_info.get_player_info()
@@ -196,11 +216,22 @@ class ApehaBot(object):
                     # Waiting for run started
                     f_fight.wait_for_fight()
                     if f_fight.is_time_left_visible():
-                        self._start_and_end_fight(f_action, f_info, f_fight, fight_bot, info.name, item_ids, rating,
-                                                  astral_level, block_ids)
-                        self._repair_items_and_put_on(f_action, f_info, item_ids, rating)
+                        self._start_and_end_fight(
+                            f_action,
+                            f_info,
+                            f_fight,
+                            fight_bot,
+                            info.name,
+                            item_ids,
+                            rating,
+                            astral_level,
+                            block_ids,
+                        )
+                        self._repair_items_and_put_on(
+                            f_action, f_info, item_ids, rating
+                        )
                     else:
-                        print u"Бой не начался пробую еще раз"
+                        print("Бой не начался пробую еще раз")
                 except StopException as e:
                     raise e
                 except:
@@ -211,7 +242,7 @@ class ApehaBot(object):
                         get_browser().switch_to_default_content()
                     f_action._stand_up_from_chair()
         except StopException:
-            print u"Бот остановлен"
+            print("Бот остановлен")
 
 
 class FightBot(object):
@@ -244,7 +275,10 @@ class FightBot(object):
     def __select_next_astral_and_is_in_astral(self, cur_level, max_level):
         self.to_stop()
         astral_cur = self.f_info.get_astral_cur_and_max()[0]
-        if astral_cur > self.default_settings.fighting_settings.MIN_ASTRAL_MANA_TO_USE and cur_level != max_level:
+        if (
+            astral_cur > self.default_settings.fighting_settings.MIN_ASTRAL_MANA_TO_USE
+            and cur_level != max_level
+        ):
             cur_astral_level = self.f_info.select_next_astral_level()
             return cur_astral_level
         else:
@@ -274,9 +308,11 @@ class FightBot(object):
 
         have_aliases = nr_of_aliases_originals > 1
         first_round = cur_round == 1
-        return (first_round or
-                (have_aliases and (nr_of_aliases < 3.0 * nr_of_enemies)) or
-                (not have_aliases and nr_of_enemy_originals == 0))
+        return (
+            first_round
+            or (have_aliases and (nr_of_aliases < 3.0 * nr_of_enemies))
+            or (not have_aliases and nr_of_enemy_originals == 0)
+        )
 
     def fight(self, name, astral_level, block_ids):
         self.to_stop()
@@ -303,7 +339,10 @@ class FightBot(object):
                 players = self._get_players(fcc, nickname=name, team=team_color)
                 if not players:
                     break
-                if len(players.enemy_originals) == 1 and len(players.alias_originals) == 1:
+                if (
+                    len(players.enemy_originals) == 1
+                    and len(players.alias_originals) == 1
+                ):
                     break
 
                 if not team_color:
@@ -311,31 +350,48 @@ class FightBot(object):
 
                 if self.__use_mana(players, cur_round):
                     try:
-                        if (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_CLONE and
-                                    hp_rate >= self.default_settings.fighting_settings.MIN_HP_RATIO):
-                            cur_astral_level = self.__select_next_astral_and_is_in_astral(cur_astral_level, astral_level)
+                        if (
+                            mana_cur
+                            >= self.default_settings.fighting_settings.MANA_FOR_CLONE
+                            and hp_rate
+                            >= self.default_settings.fighting_settings.MIN_HP_RATIO
+                        ):
+                            cur_astral_level = (
+                                self.__select_next_astral_and_is_in_astral(
+                                    cur_astral_level, astral_level
+                                )
+                            )
                             in_astral = cur_astral_level > 0
 
                             self.f_info.cast_create_clone()
-                            fcc.create_clone(name, players, self.default_settings.clone_placement)
+                            fcc.create_clone(
+                                name, players, self.default_settings.clone_placement
+                            )
                             useless_rounds = 0
-                        elif (mana_cur >= self.default_settings.fighting_settings.MANA_FOR_HP and
-                                      hp_rate < self.default_settings.fighting_settings.MIN_HP_RATIO):
+                        elif (
+                            mana_cur
+                            >= self.default_settings.fighting_settings.MANA_FOR_HP
+                            and hp_rate
+                            < self.default_settings.fighting_settings.MIN_HP_RATIO
+                        ):
                             self.f_info.cast_fill_hp()
                             useless_rounds = 0
                     finally:
-                            browser = get_browser()
-                            driver = browser._driver
-                            if len(driver.window_handles) > 1:
-                                try:
-                                    browser.close_current_window_and_focus_to_previous_one()
-                                except WebDriverException:
-                                    driver.switch_to_alert()
-                                    browser.alert_accept()
+                        browser = get_browser()
+                        driver = browser._driver
+                        if len(driver.window_handles) > 1:
+                            try:
+                                browser.close_current_window_and_focus_to_previous_one()
+                            except WebDriverException:
+                                driver.switch_to_alert()
+                                browser.alert_accept()
 
                 else:
                     useless_rounds += 1
-                    if useless_rounds == self.default_settings.fighting_settings.ROUNDS_TO_FREEZE:
+                    if (
+                        useless_rounds
+                        == self.default_settings.fighting_settings.ROUNDS_TO_FREEZE
+                    ):
                         break
 
                 self.f_fight.block_myself(block_ids)
@@ -344,7 +400,7 @@ class FightBot(object):
                 self.f_fight.wait_for_round_ended()
                 cur_round += 1
         finally:
-            print(u'Выхожу из астрала')
+            print(u"Выхожу из астрала")
             while self.f_fight.is_fighting() and in_astral:
                 self.to_stop()
                 in_astral = self.__select_previous_astral_and_is_in_astral()

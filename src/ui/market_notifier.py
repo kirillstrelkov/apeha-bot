@@ -1,25 +1,40 @@
 # encoding=utf8
 
-import pynotify
 import time
 from random import randint
-from threading import Thread, Event
-from wx._controls import TextCtrl, TE_MULTILINE, TE_READONLY, Button, \
-    StaticBox, TE_DONTWRAP, CheckBox
-from wx._core import BoxSizer, VERTICAL, HORIZONTAL, \
-    EXPAND, StaticBoxSizer, EVT_BUTTON, EVT_CLOSE, \
-    CallAfter, EVT_CHECKBOX
-from wx._windows import Frame
+from threading import Event, Thread
 
+import pynotify
 from src.apeha.bot.settings import BotSettings
 from src.web.utils.webutils import get_browser
 from src.web.views.frames import ApehaMain, FrameAction
 from src.web.views.market import MarketChat
 from src.web.views.smithy import SmithyChat
+from wx.controls import (
+    TE_DONTWRAP,
+    TE_MULTILINE,
+    TE_READONLY,
+    Button,
+    CheckBox,
+    StaticBox,
+    TextCtrl,
+)
+from wx.core import (
+    EVT_BUTTON,
+    EVT_CHECKBOX,
+    EVT_CLOSE,
+    EXPAND,
+    HORIZONTAL,
+    VERTICAL,
+    BoxSizer,
+    CallAfter,
+    StaticBoxSizer,
+)
+from wx.windows import Frame
 
 
 class Notifier(Frame):
-    __TITLE = u"Обзор собщений в чате"
+    __TITLE = "Обзор собщений в чате"
     __SIZE = (700, 400)
 
     def __init__(self, parent, username, password):
@@ -81,7 +96,7 @@ class Notifier(Frame):
         m_text = text[:6]
         message = text
         pynotify.init("My app")
-        n = pynotify.Notification(m_text.encode("utf8"), message.encode("utf8"))
+        n = pynotify.Notification(m_text, message)
         n.set_timeout(5000)
         n.show()
 
@@ -140,7 +155,7 @@ class Notifier(Frame):
         if len(chats) == 1:
             go_to(chats[0] == mchat)
 
-        while (not self.event.is_set()):
+        while not self.event.is_set():
             for chat in chats:
                 if len(chats) > 1:
                     action._click_main_square()

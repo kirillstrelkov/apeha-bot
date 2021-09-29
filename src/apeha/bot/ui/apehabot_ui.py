@@ -5,26 +5,22 @@ import os
 import sys
 from threading import Thread
 
-
-root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", '..', '..'))
+root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 if root not in os.sys.path:
     os.sys.path.append(root)
 os.sys.path.append(os.path.abspath(os.curdir))
 
-from wx._core import App, BoxSizer, VERTICAL, HORIZONTAL, ALL, EXPAND, \
-    StaticBoxSizer, EVT_CHECKBOX, CB_READONLY, \
-    CallAfter, EVT_BUTTON
-from wx._windows import Frame
-from wx._controls import StaticText, TextCtrl, StaticBox, CheckBox, TE_PASSWORD, \
-    ComboBox, TE_READONLY, TE_MULTILINE, Button, TE_DONTWRAP
-
+from src.apeha.bot.bot import ApehaBot
+from src.apeha.bot.settings import ClonePlacement, Tactics, get_settings
 from src.web.utils.helper import safe_execute
 from src.web.utils.webutils import quit_browser
-
-
-from src.apeha.utils import unicode_str
-from src.apeha.bot.bot import ApehaBot
-from src.apeha.bot.settings import get_settings, Tactics, ClonePlacement
+from wx.controls import (TE_DONTWRAP, TE_MULTILINE, TE_PASSWORD, TE_READONLY,
+                         Button, CheckBox, ComboBox, StaticBox, StaticText,
+                         TextCtrl)
+from wx.core import (ALL, CB_READONLY, EVT_BUTTON, EVT_CHECKBOX, EXPAND,
+                     HORIZONTAL, VERTICAL, App, BoxSizer, CallAfter,
+                     StaticBoxSizer)
+from wx.windows import Frame
 
 
 class RedirectText(object):
@@ -41,7 +37,7 @@ class ApehaBotUI(Frame):
         self.settings = get_settings()
 
         self.SetSizeWH(700, 500)
-        self.SetTitle(u"АРЕНА бот")
+        self.SetTitle("АРЕНА бот")
         self.SetSizer(BoxSizer(VERTICAL))
         self.__create_ui()
         redir = RedirectText(self.output)
@@ -55,7 +51,7 @@ class ApehaBotUI(Frame):
 
         hbox = BoxSizer(HORIZONTAL)
         lname = StaticText(self)
-        lname.SetLabel(u"Ник:")
+        lname.SetLabel("Ник:")
         self.txt_nick = TextCtrl(self)
         hbox.Add(lname, 1, flag=ALL, border=4)
         hbox.Add(self.txt_nick, 2)
@@ -63,7 +59,7 @@ class ApehaBotUI(Frame):
 
         hbox = BoxSizer(HORIZONTAL)
         lname = StaticText(self)
-        lname.SetLabel(u"Пароль:")
+        lname.SetLabel("Пароль:")
         self.txt_pwd = TextCtrl(self, style=TE_PASSWORD)
         hbox.Add(lname, 1, flag=ALL, border=4)
         hbox.Add(self.txt_pwd, 2)
@@ -71,19 +67,22 @@ class ApehaBotUI(Frame):
 
         hbox = BoxSizer(HORIZONTAL)
         label = StaticText(self)
-        label.SetLabel(u"Уровень астрала:")
+        label.SetLabel("Уровень астрала:")
         self.cb_atral_level = ComboBox(self, style=CB_READONLY)
         for level in self.settings.fighting_settings.ASTRAL_LEVELS:
-            self.cb_atral_level.Append(unicode_str(level))
+            self.cb_atral_level.Append(str(level))
         self.cb_atral_level.Select(
-            self.settings.fighting_settings.ASTRAL_LEVELS.index(self.settings.default_astral_level))
+            self.settings.fighting_settings.ASTRAL_LEVELS.index(
+                self.settings.default_astral_level
+            )
+        )
         hbox.Add(label, 1, flag=ALL, border=4)
         hbox.Add(self.cb_atral_level, 2)
         sizer.Add(hbox, flag=EXPAND)
 
         hbox = BoxSizer(HORIZONTAL)
         label = StaticText(self)
-        label.SetLabel(u"Тактика клонов:")
+        label.SetLabel("Тактика клонов:")
         self.cb_tactics = ComboBox(self, style=CB_READONLY)
         for tactic in Tactics.ALL:
             self.cb_tactics.Append(tactic)
@@ -95,42 +94,46 @@ class ApehaBotUI(Frame):
 
         hbox = BoxSizer(HORIZONTAL)
         label = StaticText(self)
-        label.SetLabel(u"Ставить клонов:")
+        label.SetLabel("Ставить клонов:")
         self.cb_placement = ComboBox(self, style=CB_READONLY)
         for value in ClonePlacement.ALL:
             self.cb_placement.Append(value)
         # setting default placement:
-        self.cb_placement.Select(ClonePlacement.ALL.index(self.settings.clone_placement))
+        self.cb_placement.Select(
+            ClonePlacement.ALL.index(self.settings.clone_placement)
+        )
         hbox.Add(label, 1, flag=ALL, border=4)
         hbox.Add(self.cb_placement, 2)
         sizer.Add(hbox, flag=EXPAND)
 
         hbox = BoxSizer(HORIZONTAL)
         lname = StaticText(self)
-        lname.SetLabel(u"Не заходить в заявки с игроками:")
+        lname.SetLabel("Не заходить в заявки с игроками:")
         self.txt_bad_players = TextCtrl(self)
         hbox.Add(lname, 1, flag=ALL, border=4)
         hbox.Add(self.txt_bad_players, 2)
-        self.txt_bad_players.SetValue(u", ".join(self.settings.fighting_settings.UNWANTED_PLAYERS))
+        self.txt_bad_players.SetValue(
+            ", ".join(self.settings.fighting_settings.UNWANTED_PLAYERS)
+        )
         sizer.Add(hbox, 0, flag=EXPAND)
 
         hbox = BoxSizer(HORIZONTAL)
         self.cb_save_items = CheckBox(self)
-        self.cb_save_items.SetLabel(u"Надеть сохраненные вещи")
+        self.cb_save_items.SetLabel("Надеть сохраненные вещи")
         self.cb_save_items.SetValue(True)
         hbox.Add(self.cb_save_items)
         sizer.Add(hbox, 0, flag=EXPAND)
 
         hbox = BoxSizer(HORIZONTAL)
         self.cb_my_tactics = CheckBox(self)
-        self.cb_my_tactics.SetLabel(u"Ставить блоки рэндомно")
+        self.cb_my_tactics.SetLabel("Ставить блоки рэндомно")
         hbox.Add(self.cb_my_tactics)
         sizer.Add(hbox, 0, flag=EXPAND)
         self.Bind(EVT_CHECKBOX, self.__on_cb_tactics, self.cb_my_tactics)
         self.cb_my_tactics.SetValue(True)
 
         box = StaticBox(self)
-        box.SetLabel(u"Блоки")
+        box.SetLabel("Блоки")
         sbs = StaticBoxSizer(box, VERTICAL)
         hbox = BoxSizer(HORIZONTAL)
         hbox.AddStretchSpacer()
@@ -185,22 +188,22 @@ class ApehaBotUI(Frame):
 
         hbox = BoxSizer(HORIZONTAL)
         self.btn_stop_and_quit = Button(self)
-        self.btn_stop_and_quit.SetLabel(u"Остановить бота и закрыть браузер")
+        self.btn_stop_and_quit.SetLabel("Остановить бота и закрыть браузер")
         self.btn_stop_and_quit.Disable()
         self.Bind(EVT_BUTTON, self.__on_stop_and_quit, self.btn_stop_and_quit)
         hbox.Add(self.btn_stop_and_quit, 2)
         #         self.btn_stop = Button(self)
-        #         self.btn_stop.SetLabel(u"Остановить бота")
+        #         self.btn_stop.SetLabel("Остановить бота")
         #         hbox.Add(self.btn_stop, 1)
         hbox.AddStretchSpacer()
         self.btn_start = Button(self)
-        self.btn_start.SetLabel(u"Запустить бота")
+        self.btn_start.SetLabel("Запустить бота")
         hbox.Add(self.btn_start, 2)
         self.Bind(EVT_BUTTON, self.__on_run_bot, self.btn_start)
         sizer.Add(hbox, flag=EXPAND)
 
         box = StaticBox(self)
-        box.SetLabel(u"Информация")
+        box.SetLabel("Информация")
         sbs = StaticBoxSizer(box, VERTICAL)
         self.output = TextCtrl(self, style=TE_READONLY | TE_MULTILINE | TE_DONTWRAP)
         sbs.Add(self.output, 1, flag=EXPAND)
@@ -236,7 +239,7 @@ class ApehaBotUI(Frame):
         block_ids = self.__get_block_ids()
         clone_tactics = self.cb_tactics.GetValue()
         clone_placement = self.cb_placement.GetValue()
-        bad_players = [p.strip() for p in self.txt_bad_players.GetValue().split(u', ')]
+        bad_players = [p.strip() for p in self.txt_bad_players.GetValue().split(", ")]
 
         if self.__is_correct_values(username, password, astral_level, block_ids):
             self.settings.default_astral_level = astral_level
@@ -245,7 +248,10 @@ class ApehaBotUI(Frame):
             self.settings.fighting_settings.UNWANTED_PLAYERS = bad_players
 
             def cmd():
-                self.apeha_bot = ApehaBot(self.settings, use_saved_ids_from_settings=self.cb_save_items.GetValue())
+                self.apeha_bot = ApehaBot(
+                    self.settings,
+                    use_saved_ids_from_settings=self.cb_save_items.GetValue(),
+                )
                 self.apeha_bot.run(username, password, astral_level, block_ids)
 
                 self.apeha_bot.stop_event.clear()
@@ -272,7 +278,7 @@ class ApehaBotUI(Frame):
             self.cb11: "11",
             self.cb12: "12",
             self.cb13: "13",
-            self.cb14: "14"
+            self.cb14: "14",
         }
         ids = []
         for cb in cbs_left + cbs_right:
@@ -290,10 +296,12 @@ class ApehaBotUI(Frame):
         else:
             ids_correct = self.cb_my_tactics.IsChecked() == False
 
-        return len(username) > 0 \
-               and len(password) > 0 \
-               and type(astral_level) == int \
-               and ids_correct
+        return (
+            len(username) > 0
+            and len(password) > 0
+            and type(astral_level) == int
+            and ids_correct
+        )
 
     def __on_stop_and_quit(self, e):
         if self.apeha_bot.stop_event:
@@ -363,7 +371,7 @@ class ApehaBotUI(Frame):
             obj.SetValue(True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = App(False)
     frame = ApehaBotUI(None)
     frame.Show()

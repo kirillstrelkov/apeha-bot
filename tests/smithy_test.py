@@ -16,7 +16,7 @@ class SmithyTest(TestCase):
         cls.smithy.browser.quit()
 
     def test_chatlog1(self):
-        log = u"""16:52  ДЕРБИ_: Свободный кузнец +7/+35 % Выполню СРОЧНЫЙ ЗАКАЗ! :hello:
+        log = """16:52  ДЕРБИ_: Свободный кузнец +7/+35 % Выполню СРОЧНЫЙ ЗАКАЗ! :hello:
 16:52  drugs666: :znaika:вставлю сейчас +7/+35% за низкие серые цены :rupor:принимаю не срочные заказы
 16:54  Mahaon77: :rupor: Принимаю заказы на вставку +7/ +35%. :smash:
 16:57  *БЫЧАРА*: свободный кузнец 35/7 воткну ща, на опт скидки, низкие цены :super:
@@ -51,19 +51,19 @@ class SmithyTest(TestCase):
 20:41  zloba: :znaika: вкузнечиваю камни на 15/75% :znaika:
 20:46  Хам Трамвайный: 7/35% свободный кузнец))"""
         for line in log.splitlines():
-#             print smithy.is_smithy_message(line), line
+            #             print(smithy.is_smithy_message(line), line
             if "_SPAM_" in line or "FANTOM bel" in line:
-                self.assertTrue(self.smithy.is_message(line))
+                assert self.smithy.is_message(line)
             else:
-                self.assertFalse(self.smithy.is_message(line))
+                assert not self.smithy.is_message(line)
 
     def test_chatlog(self):
-        t1 = u"20:33  **Wolf**: -75 крита или удачи может кто сделать? В приват"
-        self.assertFalse(self.smithy.is_message(t1))
-        
-        t1 = u"20:33  7**Wolf**: -75 крита или удачи может кто сделать? В приват"
-        self.assertFalse(self.smithy.is_message(t1))
-    
+        t1 = "20:33  **Wolf**: -75 крита или удачи может кто сделать? В приват"
+        assert not self.smithy.is_message(t1)
+
+        t1 = "20:33  7**Wolf**: -75 крита или удачи может кто сделать? В приват"
+        assert not self.smithy.is_message(t1)
+
     def test_chatlog2(self):
-        t = u"21:46  RoxYy: :rupor:+7 сила кто поставит"
-        self.assertTrue(self.smithy.is_message(t))
+        t = "21:46  RoxYy: :rupor:+7 сила кто поставит"
+        assert self.smithy.is_message(t)

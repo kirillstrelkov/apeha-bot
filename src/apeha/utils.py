@@ -3,8 +3,8 @@ import traceback
 
 
 class ApehaRegExp(object):
-    NICKNAME_HP_ENDING = re.compile(r'\s*\[\d+/?\d*\]$')
-    NICKNAME_RACE_START = re.compile(r'^[\w]{2}\s+')
+    NICKNAME_HP_ENDING = re.compile(r"\s*\[\d+/?\d*\]$")
+    NICKNAME_RACE_START = re.compile(r"^[\w]{2}\s+")
     FLOAT = re.compile(r"\d+\.\d+")
     NUMBER = re.compile(r"\d+")
 
@@ -26,8 +26,6 @@ def get_float_from_text(text):
 
 
 def print_exception():
-    print traceback.format_exc()
+    print(traceback.format_exc())
 
 
-def unicode_str(string):
-    return u"%s" % string

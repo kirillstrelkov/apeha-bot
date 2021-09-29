@@ -8,15 +8,12 @@ def safe_execute(function):
     browser = get_browser()
 
     try:
-        if not browser:
-            browser = get_browser()
-
         function()
         value = True
     except:
         if browser:
             browser.save_screenshot()
-        print traceback.format_exc()
+        print(traceback.format_exc())
         value = False
     finally:
         if browser:

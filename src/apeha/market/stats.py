@@ -4,4 +4,4 @@ class Property(object):
         self.value = value
 
     def __str__(self):
-        return u"%s: %s" % (self.name, self.value)
+        return "%s: %s" % (self.name, self.value)

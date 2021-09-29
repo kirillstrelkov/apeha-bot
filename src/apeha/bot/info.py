@@ -10,4 +10,6 @@ class PlayerInfo(object):
         self.astral_level = astral_level
 
     def __str__(self):
-        return ", ".join([self.name, self.rating, self.hp, self.mana, self.astral, self.clan])
+        return ", ".join(
+            [self.name, self.rating, self.hp, self.mana, self.astral, self.clan]
+        )

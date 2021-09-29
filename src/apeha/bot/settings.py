@@ -5,41 +5,47 @@ import pickle
 
 import jsonpickle
 
-jsonpickle.set_preferred_backend('json')
-jsonpickle.set_encoder_options('json', indent=4)
+jsonpickle.set_preferred_backend("json")
+jsonpickle.set_encoder_options("json", indent=4)
 
 INJURIES_AND_ROLLS = {
-    u"Легкая травма": u"Лечение легкой травмы",
-    u"Средняя травма": u"Лечение средней травмы",
-    u"Тяжелая травма": u"Лечение тяжелой травмы",
+    "Легкая травма": "Лечение легкой травмы",
+    "Средняя травма": "Лечение средней травмы",
+    "Тяжелая травма": "Лечение тяжелой травмы",
 }
 
 
 class ClonePlacement(object):
-    TO_ALIASES_ME_FIRST = u"Ставить клонов к себе потом к союзникам"
-    TO_ALIASES_TOP = u"Ставить клонов к союзникам начиная сверху"
-    TO_ALIASES_RANDOM = u"Ставить клонов к союзникам рандомно"
-    TO_EMENIES_TOP = u"Ставить клонов к противникам начиная сверху"
-    TO_EMENIES_BOTTOM = u"Ставить клонов к противникам начиная снизу"
-    TO_EMENIES_RANDOM = u"Ставить клонов к противникам рандомно"
-    ALL = [TO_ALIASES_ME_FIRST, TO_ALIASES_TOP, TO_ALIASES_RANDOM,
-           TO_EMENIES_TOP, TO_EMENIES_BOTTOM, TO_EMENIES_RANDOM]
+    TO_ALIASES_ME_FIRST = "Ставить клонов к себе потом к союзникам"
+    TO_ALIASES_TOP = "Ставить клонов к союзникам начиная сверху"
+    TO_ALIASES_RANDOM = "Ставить клонов к союзникам рандомно"
+    TO_EMENIES_TOP = "Ставить клонов к противникам начиная сверху"
+    TO_EMENIES_BOTTOM = "Ставить клонов к противникам начиная снизу"
+    TO_EMENIES_RANDOM = "Ставить клонов к противникам рандомно"
+    ALL = [
+        TO_ALIASES_ME_FIRST,
+        TO_ALIASES_TOP,
+        TO_ALIASES_RANDOM,
+        TO_EMENIES_TOP,
+        TO_EMENIES_BOTTOM,
+        TO_EMENIES_RANDOM,
+    ]
 
 
 class Tactics(object):
-    STANDARD = u"Стандартная"
-    DEFENSIVE = u"Защитная"
-    OFFENSIVE = u"Атакующая"
-    AGRESSIVE = u"Агрессивная"
+    STANDARD = "Стандартная"
+    DEFENSIVE = "Защитная"
+    OFFENSIVE = "Атакующая"
+    AGRESSIVE = "Агрессивная"
     ALL = [STANDARD, DEFENSIVE, OFFENSIVE, AGRESSIVE]
 
 
 class SpellTexts(object):
-    CURRENT_ASTRAL_LVL_TEXT = u"Текущий слой астрала:"
-    MAGBOOK_FILL_HP_TEXT = u"Восстановить здоровье"
-    MAGBOOK_CREATE_CLONE1 = u"Создать клон"
-    MAGBOOK_CREATE_CLONE2 = u"Вызвать помощника"
-    MAGBOOK_CREATE_CLONE3 = u"Призвать слугу"
+    CURRENT_ASTRAL_LVL_TEXT = "Текущий слой астрала:"
+    MAGBOOK_FILL_HP_TEXT = "Восстановить здоровье"
+    MAGBOOK_CREATE_CLONE1 = "Создать клон"
+    MAGBOOK_CREATE_CLONE2 = "Вызвать помощника"
+    MAGBOOK_CREATE_CLONE3 = "Призвать слугу"
 
 
 class _Timeouts(object):
@@ -72,11 +78,11 @@ class _FightingSettings(object):
         self.APP_MIN_TIMEOUT = 30
         self.APP_MIN_LEVEL_DIFF = -1
         self.APP_MIN_SIZE = 3
-        self.APP_MAP_STANDARD = u'станд'
+        self.APP_MAP_STANDARD = "станд"
 
 
 class BotSettings(object):
-    FILEPATH = os.path.join(os.path.expanduser("~"), '.settings_apehapy.json')
+    FILEPATH = os.path.join(os.path.expanduser("~"), ".settings_apehapy.json")
 
     # main settings which should be used everywhere
     def __init__(self):
@@ -89,9 +95,9 @@ class BotSettings(object):
         self.default_astral_level = 3
 
 
-__MODE_RB = 'rb'
-__MODE_WB = 'wb'
-__ENCODING = 'utf8'
+__MODE_RB = "rb"
+__MODE_WB = "wb"
+__ENCODING = "utf8"
 
 
 def get_settings(path=None):

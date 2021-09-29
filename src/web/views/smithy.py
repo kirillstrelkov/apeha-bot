@@ -3,31 +3,30 @@
 import re
 
 from selenium.webdriver.common.by import By
-
-from src.apeha.market.data.stones import STONES, FACETED, MOD_AND_LEVELS
+from src.apeha.market.data.stones import FACETED, MOD_AND_LEVELS, STONES
 from src.apeha.market.parsers import JewerlyParser
-from src.apeha.utils import get_number_from_text, unicode_str
+from src.apeha.utils import get_number_from_text
 from src.web.views.frames import FrameAction, FrameChat
 
 
 def fancy_print(value, symbol="=", length=50):
     _len = len(value) + 2
     if _len >= length:
-        print value
+        print(value)
     else:
-        times = (length - _len) / 2
-        print symbol * times, value, symbol * times
+        times = (length - _len) // 2
+        print(symbol * times + value + symbol * times)
 
 
 class Smithy(FrameAction):
-    JEWELRY = (By.CSS_SELECTOR, u"input[value='Гранильные']")
-    SEARCH_ITEM = (By.CSS_SELECTOR, u"input[value='Поиск товаров']")
-    NAME_VALUE = (By.CSS_SELECTOR, u"input[name='iname']")
-    MOD_VALUE = (By.CSS_SELECTOR, u"select[name='mod']")
-    SEARCH = (By.CSS_SELECTOR, u"input[value='Найти']")
-    TABLE_DATA = (By.CSS_SELECTOR, u"table.item")
-    NEXT = (By.CSS_SELECTOR, u"input[value='Дальше']")
-    PREVIOUS = (By.CSS_SELECTOR, u"input[value='Назад']")
+    JEWELRY = (By.CSS_SELECTOR, "input[value='Гранильные']")
+    SEARCH_ITEM = (By.CSS_SELECTOR, "input[value='Поиск товаров']")
+    NAME_VALUE = (By.CSS_SELECTOR, "input[name='iname']")
+    MOD_VALUE = (By.CSS_SELECTOR, "select[name='mod']")
+    SEARCH = (By.CSS_SELECTOR, "input[value='Найти']")
+    TABLE_DATA = (By.CSS_SELECTOR, "table.item")
+    NEXT = (By.CSS_SELECTOR, "input[value='Дальше']")
+    PREVIOUS = (By.CSS_SELECTOR, "input[value='Назад']")
 
     def __init__(self):
         FrameAction.__init__(self)
@@ -47,13 +46,13 @@ class Smithy(FrameAction):
     def print_stones(self, data):
         fancy_print("Information about stones in jewelries")
         for k in sorted(data.keys()):
-            print k
+            print(k)
             v = data[k]
             for k in sorted(v.keys()):
-                print "\t%s" % k
+                print("\t%s" % k)
                 iv = v[k]
                 for s in iv:
-                    print "\t%13s\t%s" % (s.price, s.owner)
+                    print("\t%13s\t%s" % (s.price, s.owner))
 
     def get_stones(self, limit=10, faceted=True):
         data = {}
@@ -70,10 +69,10 @@ class Smithy(FrameAction):
 
         for k in STONES.keys():
             if faceted:
-                value = u"%s %s" % (k, FACETED)
+                value = "%s %s" % (k, FACETED)
                 mods = self.browser.get_texts_from_dropdown(self.MOD_VALUE)[1:]
             else:
-                value = u"%s" % k
+                value = "%s" % k
                 mods = self.browser.get_texts_from_dropdown(self.MOD_VALUE)[:1]
 
             for mod in mods:
@@ -82,20 +81,24 @@ class Smithy(FrameAction):
                 self._type(value)
                 self.browser.click(self.SEARCH)
 
-                if self.browser.is_present(self.TABLE_DATA) and self.browser.is_visible(self.TABLE_DATA):
+                if self.browser.is_present(self.TABLE_DATA) and self.browser.is_visible(
+                    self.TABLE_DATA
+                ):
                     stones = []
                     text = self.browser.get_text(self.TABLE_DATA)
                     stones += JewerlyParser(text, faceted).get_stones()
 
-                    while (self.browser.is_visible(self.NEXT)):
+                    while self.browser.is_visible(self.NEXT):
                         self.browser.click(self.NEXT)
-                        if self.browser.is_present(self.TABLE_DATA) and self.browser.is_visible(self.TABLE_DATA):
+                        if self.browser.is_present(
+                            self.TABLE_DATA
+                        ) and self.browser.is_visible(self.TABLE_DATA):
                             text = self.browser.get_text(self.TABLE_DATA)
                             stones += JewerlyParser(text, faceted).get_stones()
 
                     def is_level_correct(stone):
                         owner = stone.owner
-                        level = get_number_from_text(owner[owner.rindex(' '):])
+                        level = get_number_from_text(owner[owner.rindex(" ") :])
                         _mod = get_number_from_text(mod)
                         _min, _max = MOD_AND_LEVELS[_mod]
 
@@ -114,7 +117,7 @@ class Smithy(FrameAction):
 
 
 class SmithyChat(FrameChat):
-    MESSAGES = (By.CSS_SELECTOR, u"#messages")
+    MESSAGES = (By.CSS_SELECTOR, "#messages")
 
     def __init__(self, settings, facet=7):
         FrameChat.__init__(self, settings)
@@ -125,31 +128,33 @@ class SmithyChat(FrameChat):
 
         if text.find(column) == -1:
             return False
-        text = text[text.index(column) + 1:]
+        text = text[text.index(column) + 1 :]
 
         if text.find(column) == -1:
             return False
-        text = text[text.index(column) + 1:]
+        text = text[text.index(column) + 1 :]
         text = text.strip()
         text = text.lower()
 
-        facet2 = unicode_str(self.facet * 5)
-        facet = unicode_str(self.facet)
+        facet2 = str(self.facet * 5)
+        facet = str(self.facet)
 
-        if u"свободный" in text or \
-                        u"вставлю" in text or \
-                        u"вставляю" in text or \
-                        u"вставк" in text or \
-                        u"заказ" in text or \
-                        u"свободен" in text:
-            if u"нужен" not in text:
+        if (
+            "свободный" in text
+            or "вставлю" in text
+            or "вставляю" in text
+            or "вставк" in text
+            or "заказ" in text
+            or "свободен" in text
+        ):
+            if "нужен" not in text:
                 return False
 
         if facet in text:
             index = text.index(facet) + 1
             if index < len(text):
-                # print text, text[index]
-                return re.match("[0-9]{1}", text[index]) == None
+                # print(text, text[index])
+                return re.match("[0-9]{1}", text[index]) is None
             else:
                 return True
 

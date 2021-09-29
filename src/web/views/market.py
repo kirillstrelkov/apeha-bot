@@ -14,9 +14,9 @@ class MarketChat(FrameChat):
 
     def is_message(self, msg):
         msg = msg.lower()
-        sell0 = u"(мод" in msg
-        sell1 = u"продам" in msg and u"мод" in msg
-        sell2 = u"подкладка" not in msg
+        sell0 = "(мод" in msg
+        sell1 = "продам" in msg and "мод" in msg
+        sell2 = "подкладка" not in msg
         if (sell0 or sell1) and sell2:
             return True
         else:

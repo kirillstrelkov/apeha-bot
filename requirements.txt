@@ -1,0 +1,8 @@
+wxPython
+selenium
+easelenium
+python-dotenv
+pytest
+pytest-dotenv
+jsonpickle
+loguru

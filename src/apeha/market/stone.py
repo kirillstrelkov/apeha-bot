@@ -1,22 +1,27 @@
 # encoding=utf8
+from functools import total_ordering
 from string import Template
 
 from src.apeha.market.price import Price
-from src.apeha.utils import unicode_str
 
 
+@total_ordering
 class Stone(object):
     def __init__(self, name, mod):
         self.name = name
         self.mod = mod
 
-    def __cmp__(self, other):
-        comp = cmp(self.mod, other.mod)
+    def __eq__(self, other):
+        return (self.name, self.mod) == (other.name, other.mod)
 
-        if comp == 0:
-            comp = cmp(self.name, other.name)
+    def __ne__(self, other):
+        return not (self == other)
 
-        return comp
+    def __repr__(self):
+        return f"{self.name} {self.mod}"
+
+    def __lt__(self, other):
+        return self.mod < other.mod
 
 
 class MarketStone(Stone):
@@ -27,29 +32,32 @@ class MarketStone(Stone):
         self.owner = owner
 
     def __str__(self):
-        template = u"""$name
+        template = """$name
 Лавка: $owner
 Цена: $price
 """
 
         tmp = Template(template)
         string = tmp.substitute(
-            {"name": self.name,
-             "owner": self.owner,
-             "price": self.price,
-             }
+            {
+                "name": self.name,
+                "owner": self.owner,
+                "price": self.price,
+            }
         )
         if self.mod:
-            string += unicode_str(self.mod)
+            string += str(self.mod)
 
         return string
 
-    def __cmp__(self, other):
-        comp = Stone.__cmp__(self, other)
+    def __eq__(self, other):
+        return (self.name, self.mod, self.price) == (other.name, other.mod, other.price)
 
-        if comp == 0:
-            comp = cmp(self.price, other.price)
-            if comp == 0:
-                comp = cmp(self.price, other.price)
+    def __ne__(self, other):
+        return not (self == other)
 
-        return comp
+    def __lt__(self, other):
+        return self.price < other.price or self.mod < other.mod
+
+    def __repr__(self):
+        return Stone.__repr__(self) + f"{self.price} {self.owner}"

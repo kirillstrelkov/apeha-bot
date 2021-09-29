@@ -1,18 +1,22 @@
 # encoding=utf8
 
-from wx._controls import ComboBox
-from wx._core import App, BoxSizer, VERTICAL, HORIZONTAL, \
-    CB_READONLY, EXPAND, EVT_COMBOBOX
-from wx._windows import Frame
-from wx.grid import Grid
-
 from src.apeha.market.price import Price
 from src.apeha.market.stone import MarketStone
-from src.apeha.utils import unicode_str
+from wx import ComboBox, Frame
+from wx.core import (
+    CB_READONLY,
+    EVT_COMBOBOX,
+    EXPAND,
+    HORIZONTAL,
+    VERTICAL,
+    App,
+    BoxSizer,
+)
+from wx.grid import Grid
 
 
 class StoneViewer(Frame):
-    __TITLE = u"Информация о камнях в кузницах"
+    __TITLE = "Информация о камнях в кузницах"
     __SIZE = (500, 400)
 
     def __init__(self, parent, stones):
@@ -45,9 +49,9 @@ class StoneViewer(Frame):
 
         self.list = Grid(self)
         self.list.CreateGrid(0, 2)
-        self.list.SetColLabelValue(0, u"Цена")
+        self.list.SetColLabelValue(0, "Цена")
         self.list.SetColSize(0, 150)
-        self.list.SetColLabelValue(1, u"Владелец")
+        self.list.SetColLabelValue(1, "Владелец")
         self.list.SetColSize(1, 250)
         main_sizer.Add(self.list, 1, EXPAND)
 
@@ -77,7 +81,7 @@ class StoneViewer(Frame):
             i = 0
             self.list.AppendRows(len(stones))
             for stone in stones:
-                self.list.SetCellValue(i, 0, unicode_str(stone.price))
+                self.list.SetCellValue(i, 0, str(stone.price))
                 self.list.SetCellValue(i, 1, stone.owner)
                 i += 1
 
@@ -91,11 +95,16 @@ def show_stones(stones):
 
 if __name__ == "__main__":
     stones = {
-        "7x": {u"Александрит ограненный": [MarketStone(u"наме", u"мод", Price(30.00), u"владелец")],
-               u"граненный": [MarketStone(u"наме1", u"мод1", Price(30.00, 6.0), u"владелец1"),
-                              MarketStone(u"наме2", u"мод2", Price(30.00, 0.0), u"владелец2")]
-               },
-        "5x": {u"Алек": [MarketStone(u"наме", u"мод", Price(30.00, 5.0), u"владелец")]}
+        "7x": {
+            "Александрит ограненный": [
+                MarketStone("наме", "мод", Price(30.00), "владелец")
+            ],
+            "граненный": [
+                MarketStone("наме1", "мод1", Price(30.00, 6.0), "владелец1"),
+                MarketStone("наме2", "мод2", Price(30.00, 0.0), "владелец2"),
+            ],
+        },
+        "5x": {u"Алек": [MarketStone("наме", "мод", Price(30.00, 5.0), "владелец")]},
     }
 
     show_stones(stones)

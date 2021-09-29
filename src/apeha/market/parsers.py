@@ -13,13 +13,21 @@ class LineParser(object):
         index = line.find(cropping_line)
 
         if index != -1:
-            return line[index + len(cropping_line):].strip()
+            return line[index + len(cropping_line) :].strip()
+        else:
+            return None
+
+    def __get_rcroped_line(self, cropping_line, line):
+        index = line.find(cropping_line)
+
+        if index != -1:
+            return line[: index + len(cropping_line)].strip()
         else:
             return None
 
     def get_price_from_line(self, line):
-        price = u"Цена:"
-        regexp = "(\d+\.\d+)\s*\+?\s*(\d+\.\d+)?"
+        price = "Цена:"
+        regexp = r"(\d+\.\d+)\s*\+?\s*(\d+\.\d+)?"
         line = self.__get_croped_line(price, line)
 
         if line:
@@ -34,7 +42,7 @@ class LineParser(object):
             return None
 
     def get_property_from_line(self, line):
-        regexp = "[-+]?\d+%?"
+        regexp = r"[-+]?\d+%?"
         name = None
 
         for prop in STONES.values():
@@ -49,10 +57,10 @@ class LineParser(object):
         return None
 
     def get_store_owner(self, line):
-        store = u"Лавка:"
-        link = u"[i]"
+        store = "Лавка:"
+        link = "[i]"
 
-        line = line.replace(link, '')
+        line = line.replace(link, "")
         return self.__get_croped_line(store, line)
 
     def get_stone_name(self, line):
@@ -73,7 +81,7 @@ class LineParser(object):
 class JewerlyParser(LineParser):
     def __init__(self, text, is_faceted=True):
         LineParser.__init__(self)
-        self.__text = text
+        self.__text = text.strip()
         self.__is_faceted = is_faceted
 
     def get_stones(self):
@@ -94,9 +102,9 @@ class JewerlyParser(LineParser):
                 if not mod and self.__is_faceted:
                     mod = self.get_property_from_line(line)
                     if mod:
-                        mod = u'%s' % mod
+                        mod = "%s" % mod
 
-            # print "%s | %s | %s | %s" % (name, mod , price, owner)
+            # print("%s | %s | %s | %s" % (name, mod , price, owner))
 
             if self.__is_faceted and name and mod and price and owner:
                 stones.append(MarketStone(name, mod, price, owner))

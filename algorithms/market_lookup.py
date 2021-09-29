@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 import os
 
-from algorithms import credentials
 from src.web.utils.helper import safe_execute
+
+from algorithms import credentials
 
 root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if root not in os.sys.path:
     os.sys.path.append(root)
 
 from src.ui.market_notifier import Notifier
-from wx._core import App
+from wx import App
 
 
 def run():
@@ -19,5 +20,5 @@ def run():
     app.MainLoop()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     safe_execute(run)

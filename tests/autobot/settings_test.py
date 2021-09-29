@@ -21,7 +21,7 @@ class SettingsTest(TestCase):
         self.__assert_setting_objs(obj1, obj2)
 
     def test_save_get_settings_from_local(self):
-        path = os.path.join(tempfile.gettempdir(), '.settingsapehapy')
+        path = os.path.join(tempfile.gettempdir(), ".settingsapehapy")
         settings = BotSettings()
         save_settings(settings, path)
         settings2 = get_settings(path)
