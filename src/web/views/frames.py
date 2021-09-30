@@ -117,6 +117,7 @@ class FramePersInfo(Frame):
 
     def get_rating(self):
         self._switch_to_frame()
+        self.browser.wait_for_visible(self.RATING, timeout=20)
         return float(self.browser.get_text(self.RATING))
 
     def get_astral_cur_and_max(self):

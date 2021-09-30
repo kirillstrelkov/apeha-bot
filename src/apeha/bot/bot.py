@@ -177,12 +177,13 @@ class ApehaBot(object):
             rating = f_info.get_rating()
             if abs(self.default_settings.rating - rating) <= 0.2:
                 item_ids = self.default_settings.item_ids
-            elif self.use_saved_ids_from_settings:
+            elif self.use_saved_ids_from_settings and self.default_settings.item_ids:
                 item_ids = self.default_settings.item_ids
                 f_action.take_off_item_and_get_ids()
                 f_action.put_on_items_by_ids(item_ids)
             else:
                 item_ids = self._take_off_put_on_items(f_action)
+                f_action.put_on_items_by_ids(item_ids)
 
             self.default_settings.item_ids = item_ids
 

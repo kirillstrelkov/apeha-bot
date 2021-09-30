@@ -4,10 +4,10 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [{
-        "name": "Python: Current File",
+        "name": "Python: apehabot_ui",
         "type": "python",
         "request": "launch",
-        "program": "${file}",
+        "program": "${workspaceFolder}/src/apeha/bot/ui/apehabot_ui.py",
         "console": "integratedTerminal"
     }, {
         "name": "Debug Unit Test",

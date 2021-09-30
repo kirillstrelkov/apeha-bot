@@ -22,6 +22,7 @@ from wx import (
     Button,
     CheckBox,
     ComboBox,
+    Frame,
     StaticBox,
     StaticText,
     TextCtrl,
@@ -39,7 +40,6 @@ from wx.core import (
     CallAfter,
     StaticBoxSizer,
 )
-from wx import Frame
 
 
 class RedirectText(object):
@@ -139,7 +139,7 @@ class ApehaBotUI(Frame):
         hbox = BoxSizer(HORIZONTAL)
         self.cb_save_items = CheckBox(self)
         self.cb_save_items.SetLabel("Надеть сохраненные вещи")
-        self.cb_save_items.SetValue(True)
+        self.cb_save_items.SetValue(False)
         hbox.Add(self.cb_save_items)
         sizer.Add(hbox, 0, flag=EXPAND)
 
@@ -234,6 +234,7 @@ class ApehaBotUI(Frame):
         self.txt_nick.Disable()
         self.txt_pwd.Disable()
         self.cb_atral_level.Disable()
+        self.cb_save_items.Disable()
         self.cb_my_tactics.Disable()
         self.cb_tactics.Disable()
         self.cb_placement.Disable()
@@ -244,6 +245,7 @@ class ApehaBotUI(Frame):
         self.txt_nick.Enable()
         self.txt_pwd.Enable()
         self.cb_atral_level.Enable()
+        self.cb_save_items.Enable()
         self.cb_my_tactics.Enable()
         self.cb_tactics.Enable()
         self.cb_placement.Enable()

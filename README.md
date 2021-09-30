@@ -1,15 +1,15 @@
-### Бот для игры http://www.apeha.ru/
+# Бот для игры http://www.apeha.ru/
 
-### Установка поддержки Google Chrome:
+## Установка поддержки Google Chrome
 
 0. Установите Google Chrome если не установлен
 1. Скачайте драйвер для Google Chrome
-1. chromedriver: https://sites.google.com/a/chromium.org/chromedriver/downloads (**для Windows существует только один chromedriver - 32-битный**)
-1. распакуйте и поместить `chromedriver.exe` в папку пользователя(пример: C:\Users\max)
+2. chromedriver: https://sites.google.com/a/chromium.org/chromedriver/downloads (**для Windows существует только один chromedriver - 32-битный**)
+3. распакуйте и поместить `chromedriver.exe` в папку пользователя(пример: C:\Users\max)
 
-### Windows используя exe файл
+## Windows используя exe файл
 
-#### Запуск бота
+### Запуск бота
 
 **NB: Бот не поддерживает Flash - необходимо отключить Flash пароль в Арене**
 
@@ -21,18 +21,19 @@
 6. Выбрать тактику блокировки - рэндомно или определенные части тела
 7. Нажать `Запустить бота`
 
-### Windows используя Python
+## Windows используя Python
 
-#### Установка необходимых компонентов:
+### Установка необходимых компонентов:
 
 1. Скачать и установить Python **3.9** или выше(NB: При установке выбрать все компоненты):
    https://www.python.org/downloads/
 2. Скачать и запустить:
    https://bootstrap.pypa.io/get-pip.py
-3. Открыть коммандную строку(cmd.exe) и запустить комманду:
-   `C:\Python39\Scripts\pip.exe install easelenium`
-4. Запустить комманду установить wxPython:
-   `C:\Python39\Scripts\pip.exe install wxPython`
+3. Скачать [архив с кодом](https://github.com/kirillstrelkov/apeha-bot/archive/master.zip) и распаковать(`C:\Users\max\Downloads\apeha-bot-master`)
+4. Открыть коммандную строку(cmd.exe) и запустить:
+   `cd C:\Users\max\Downloads\apeha-bot-master`
+5. Запустить комманду:
+   `C:\Python39\Scripts\pip.exe install -r requirements.txt`
 
 **NB**:
 В случае обновления браузера необходимо обновить **selenium**:
@@ -44,14 +45,14 @@
 
 #### Запуск бота
 
-0. Скачать [архив с кодом](https://github.com/kirillstrelkov/apeha-bot/archive/master.zip) и распаковать
 1. Запустить **apehabot_ui.py** который находится в src/apeha/bot/ui/
+   `C:\Python39\Scripts\python.exe src\apeha\bot\ui\apehabot_ui.py`
 2. Ввести ник и пароль
 3. Выбрать уровень астрала
 4. Выбрать тактику блокировки - рэндомно или определенные части тела
 5. Нажать `Запустить бота`
 
-### Описание работы бота
+## Описание работы бота
 
 1. Проверить вещи игрока(раздеться и одеться)
 2. Бесконечно пробывать:
@@ -69,7 +70,13 @@
       5. Ждать окончания раунда
    8. Ждать окончания боя
 
-### Решение проблем
+## Настройки
+
+Настройки находятся в файле `.apehapy_settings.json` который находится в домашней папке пользователя.
+
+Пример: `C:\Users\max\.apehapy_settings.json`
+
+## Решение проблем
 
 Если обновился Google Chrome иногда необходимо обновить chromedriver
 
