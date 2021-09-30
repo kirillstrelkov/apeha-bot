@@ -1,12 +1,11 @@
 # encoding=utf8
 import codecs
 import os
-import pickle
 
 import jsonpickle
 
 jsonpickle.set_preferred_backend("json")
-jsonpickle.set_encoder_options("json", indent=4)
+jsonpickle.set_encoder_options("json", indent=4, ensure_ascii=False)
 
 INJURIES_AND_ROLLS = {
     "Легкая травма": "Лечение легкой травмы",
