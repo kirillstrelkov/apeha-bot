@@ -177,13 +177,14 @@ def create_application(left_text, right_text):
 
 
 def get_best_application(apps, min_level, fighting_settings=None):
+    min_level = max(min_level, 8)
     if not fighting_settings:
         fighting_settings = _FightingSettings()
     filtered_apps = [
         a
         for a in apps
         if (
-            a.min_level >= (min_level + fighting_settings.APP_MIN_LEVEL_DIFF)
+            abs(a.min_level - min_level) <= fighting_settings.APP_MIN_LEVEL_DIFF
             and a.timeout >= fighting_settings.APP_MIN_TIMEOUT
             and a.max_size >= fighting_settings.APP_MIN_SIZE
             and not a.obstacle

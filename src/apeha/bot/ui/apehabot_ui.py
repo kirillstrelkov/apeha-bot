@@ -14,13 +14,32 @@ from src.apeha.bot.bot import ApehaBot
 from src.apeha.bot.settings import ClonePlacement, Tactics, get_settings
 from src.web.utils.helper import safe_execute
 from src.web.utils.webutils import quit_browser
-from wx.controls import (TE_DONTWRAP, TE_MULTILINE, TE_PASSWORD, TE_READONLY,
-                         Button, CheckBox, ComboBox, StaticBox, StaticText,
-                         TextCtrl)
-from wx.core import (ALL, CB_READONLY, EVT_BUTTON, EVT_CHECKBOX, EXPAND,
-                     HORIZONTAL, VERTICAL, App, BoxSizer, CallAfter,
-                     StaticBoxSizer)
-from wx.windows import Frame
+from wx import (
+    TE_DONTWRAP,
+    TE_MULTILINE,
+    TE_PASSWORD,
+    TE_READONLY,
+    Button,
+    CheckBox,
+    ComboBox,
+    StaticBox,
+    StaticText,
+    TextCtrl,
+)
+from wx.core import (
+    ALL,
+    CB_READONLY,
+    EVT_BUTTON,
+    EVT_CHECKBOX,
+    EXPAND,
+    HORIZONTAL,
+    VERTICAL,
+    App,
+    BoxSizer,
+    CallAfter,
+    StaticBoxSizer,
+)
+from wx import Frame
 
 
 class RedirectText(object):

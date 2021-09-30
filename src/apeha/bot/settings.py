@@ -61,6 +61,7 @@ class _Timeouts(object):
 
 class _FightingSettings(object):
     def __init__(self):
+        self.BROWSER_HEADLESS = False
         self.MANA_FOR_CLONE = 75
         self.MANA_FOR_HP = 50
         self.MIN_HP_RATIO = 0.75
@@ -76,13 +77,13 @@ class _FightingSettings(object):
 
         self.APP_NUMBER_OF_PLAYERS = 8
         self.APP_MIN_TIMEOUT = 30
-        self.APP_MIN_LEVEL_DIFF = -1
+        self.APP_MIN_LEVEL_DIFF = 3
         self.APP_MIN_SIZE = 3
         self.APP_MAP_STANDARD = "станд"
 
 
 class BotSettings(object):
-    FILEPATH = os.path.join(os.path.expanduser("~"), ".settings_apehapy.json")
+    FILEPATH = os.path.join(os.path.expanduser("~"), ".apehapy_settings.json")
 
     # main settings which should be used everywhere
     def __init__(self):

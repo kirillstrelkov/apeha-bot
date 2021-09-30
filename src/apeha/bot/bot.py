@@ -5,17 +5,16 @@ import traceback
 from threading import Event
 
 from selenium.common.exceptions import WebDriverException
-
 from src.apeha.bot.fight.fight_utils import get_best_application
-from src.apeha.bot.settings import BotSettings, save_settings
+from src.apeha.bot.settings import get_settings, save_settings
 from src.apeha.utils import print_exception
 from src.web.utils.webutils import get_browser
 from src.web.views.frames import (
-    FramePersInfo,
     ApehaMain,
     FrameAction,
-    FrameFight,
     FrameCreateClone,
+    FrameFight,
+    FramePersInfo,
 )
 
 
@@ -28,7 +27,7 @@ class ApehaBot(object):
 
     def __init__(self, default_settings=None, use_saved_ids_from_settings=False):
         if not default_settings:
-            self.default_settings = BotSettings()
+            self.default_settings = get_settings()
         else:
             self.default_settings = default_settings
 

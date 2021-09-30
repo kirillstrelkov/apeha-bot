@@ -33,7 +33,12 @@ from src.web.utils.webutils import get_browser
 
 class RootBrowser(object):
     def __init__(self, settings):
-        self.browser = get_browser()
+        if settings:
+            headless = settings.fighting_settings.BROWSER_HEADLESS
+        else:
+            headless = False
+
+        self.browser = get_browser(headless=headless)
         self.settings = settings
 
 
@@ -156,12 +161,18 @@ class FramePersInfo(Frame):
 
         self.browser.click(self.BTN_STAT)
         print("* Clicking at 'Статистика'")
-        if self.browser.is_visible(main_cash_css) and self.browser.is_visible(
-            blue_cash_css
-        ):
-            main_cash = get_float_from_text(self.browser.get_text(main_cash_css))
-            blue_cash = get_float_from_text(self.browser.get_text(blue_cash_css))
+        try:
+            main_cash = 0
+            blue_cash = 0
+            self.browser.wait_for_visible(main_cash_css, timeout=10)
+            if self.browser.is_visible(main_cash_css):
+                main_cash = get_float_from_text(self.browser.get_text(main_cash_css))
+            if self.browser.is_visible(blue_cash_css):
+                blue_cash = get_float_from_text(self.browser.get_text(blue_cash_css))
+
             return main_cash, blue_cash
+        except WebDriverException:
+            pass
 
         return None
 
