@@ -261,10 +261,10 @@ class FramePersInfo(Frame):
             clicked = click_spell()
 
     def __cast_spell(self, create_clone=True):
-        def click(e):
+        def click(*args, **kwargs):
             while True:
                 try:
-                    self.browser.click(e)
+                    self.browser.click(*args, **kwargs)
                     return
                 except StaleElementReferenceException:
                     pass

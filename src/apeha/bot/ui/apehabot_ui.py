@@ -55,7 +55,7 @@ class ApehaBotUI(Frame):
         Frame.__init__(self, *args, **kwargs)
         self.settings = get_settings()
 
-        self.SetSizeWH(700, 500)
+        self.SetSize(700, 500)
         self.SetTitle("АРЕНА бот")
         self.SetSizer(BoxSizer(VERTICAL))
         self.__create_ui()
