@@ -174,6 +174,10 @@ class ApehaBot(object):
             )
 
             self._login(username, password)
+
+            f_action._click_home()
+            f_action._click_main_square()
+
             rating = f_info.get_rating()
             if abs(self.default_settings.rating - rating) <= 0.2:
                 item_ids = self.default_settings.item_ids

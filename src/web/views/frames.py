@@ -146,11 +146,10 @@ class FramePersInfo(Frame):
         self._switch_to_frame()
         text = None
 
+        self.get_cash()  # hack to wait until loaded
         self.browser.click(self.BTN_STAT)
         print("* Clicking at 'Статистика'")
-        if self.browser.is_present(self.INJURY) and self.browser.is_visible(
-            self.INJURY
-        ):
+        if self.browser.is_visible(self.INJURY):
             text = self.browser.get_text(self.INJURY)
 
         return text
